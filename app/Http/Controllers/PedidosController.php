@@ -43,6 +43,7 @@ class PedidosController extends Controller
 
             $productos = json_decode($request->input('productos'), true);
             $totalCompra = $request->input('totalCompra');
+
             $user = $request->input('code_user');
             $usuario = User::where('code_user', $user)->first();
             if (is_null($usuario)) {

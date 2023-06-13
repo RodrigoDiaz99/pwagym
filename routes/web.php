@@ -30,3 +30,6 @@ Route::post('/getProducts',[ProductosController::class,'productList'])->name('pr
 Route::get('/pedidos',[PedidosController::class,'index'])->name('pedidos.view');
 Route::post('/realizacion',[PedidosController::class,'realizacion'])->name('carrito.enviar');
 Route::post('/getData',[PedidosController::class,'getData'])->name('productos.data');
+
+Route::get('/getOrdenes',[App\Http\Controllers\OrdenController::class,'index'])->name('ordenes.index');
+Route::post('/listOrdenes',[App\Http\Controllers\OrdenController::class,'getOrdenes'])->name('ordenes.list');
