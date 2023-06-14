@@ -50,3 +50,9 @@ self.addEventListener("fetch", event => {
             })
     )
 });
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.2.0/workbox-sw.js');
+
+workbox.routing.registerRoute(
+  ({ request }) => request.destination === 'script' || request.destination === 'style' || request.destination === 'image',
+  new workbox.strategies.StaleWhileRevalidate()
+);

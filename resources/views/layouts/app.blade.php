@@ -30,6 +30,17 @@
     <link href="
     //cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.min.css
     " rel="stylesheet">
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('{{asset('serviceWorker')}}').then(function(registration) {
+              console.log('Service Worker registrado con éxito:', registration);
+            }).catch(function(error) {
+              console.log('Error al registrar el Service Worker:', error);
+            });
+          });
+        }
+      </script>
 
 
 </head>
