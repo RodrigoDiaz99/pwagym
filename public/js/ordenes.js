@@ -21,13 +21,14 @@ $(function ($) {
                 visible: false,
             },
             {
-                field: "reference_line",
+                field: "orden_number",
                 title: "#",
             },
             {
                 field: "reference_line",
                 title: "Referencia",
-            },{
+            },
+            {
                 field: "estatus",
                 title: "Estatus",
             },
@@ -46,23 +47,75 @@ $(function ($) {
         $("#cCodeBar").val("");
         $("#price").val("");
     });
-
-
 });
+
 function accionesFormatter(value, row) {
     let html = "";
     console.log(row);
+    //<a href="javascript:void(0);" onclick="subirDocumento('${cTipo}',${iIDSolicitud}, ${iIDAnioFiscal},${lActa},${lApendice},${lDerechos},${lDescripcion},${lEstatutos},${CanRect},${iID},'${inmobiliario}',${lAviso},${iIDControlActa},${lPlanos})" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;
     html +=
-        '<a rel="tooltip" title="Detalles" class="btn btn-link btn-primary table-action view" href="javascript:void(0)" onclick="ModalDetalles(' +
-        row.cCodeBar +
-        "," +
-        row.price +
-        ')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16"><path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/></svg></a>&nbsp;';
+        '<a href="javascript:void(0);" onclick="detalles('+row.id+')" class="btn btn-round btn-primary btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-info-circle"></i></a>&nbsp;';
+    switch (row.estatus) {
+        case "ENVIADO":
+            html +=
+            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+            break;
+        case "ACEPTADO":
+            html +=
+            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+            break;
+        case "PREPARACION":
+            html +=
+            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+            break;
+        case "CANCELADO":
+            html +=
+            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+            break;
+        case "TERMINADO":
+            html +=
+            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+            break;
+
+    }
     return html;
 }
 
-function ModalDetalles(cCodeBar, Price) {
-    $("#ModalDetalles").modal("show");
-    $("#cCodeBar").val(cCodeBar);
-    $("#price").val(Price);
-}
+function detalles(iIDPedido) {
+    $.ajax({
+      url: routeData,
+      type: "post",
+      encoding: "UTF-8",
+      async: true,
+      cache: false,
+      data: {
+        iIDPedido: iIDPedido,
+
+      },
+      beforeSend: function () {
+        NProgress.start();
+        NProgress.set(0.4);
+        Swal.fire({
+          title: "Motivo",
+          text: "Buscando Motivo de la Suspensión...",
+          onOpen: () => {
+            swal.showLoading();
+          },
+        });
+      },
+      success: function (data) {
+        Swal.close();
+        NProgress.done();
+
+        modalMotivos(data);
+
+        //  modalMotivos(res,stringified)
+      },
+      error: function (err) {
+        Swal.close();
+        alert(err);
+        NProgress.done();
+        alert("Problemas con el procedimiento.");
+      },
+    });
+  }

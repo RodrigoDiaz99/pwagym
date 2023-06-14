@@ -46,5 +46,6 @@
 <script src="{{asset('js/ordenes.js')}}"> </script>
 <script>
     let routePedidos = "{{route('ordenes.list')}}"
+    let routeData = "{{route('ordenes.data')}}"
 </script>
 @endsection

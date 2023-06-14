@@ -33,3 +33,5 @@ Route::post('/getData',[PedidosController::class,'getData'])->name('productos.da
 
 Route::get('/getOrdenes',[App\Http\Controllers\OrdenController::class,'index'])->name('ordenes.index');
 Route::post('/listOrdenes',[App\Http\Controllers\OrdenController::class,'getOrdenes'])->name('ordenes.list');
+Route::post('/detalles',[App\Http\Controllers\OrdenController::class,'data'])->name('ordenes.data');
+
