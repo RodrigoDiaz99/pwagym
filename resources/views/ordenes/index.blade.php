@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-
+@include('ordenes.modal')
     </div>
 @endsection
 @section('scripts')
@@ -47,5 +47,7 @@
 <script>
     let routePedidos = "{{route('ordenes.list')}}"
     let routeData = "{{route('ordenes.data')}}"
+    let routeEstatus = "{{route('ordenes.estatus')}}"
+    let routeCan = "{{route('ordenes.estatusCan')}}"
 </script>
 @endsection

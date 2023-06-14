@@ -34,4 +34,5 @@ Route::post('/getData',[PedidosController::class,'getData'])->name('productos.da
 Route::get('/getOrdenes',[App\Http\Controllers\OrdenController::class,'index'])->name('ordenes.index');
 Route::post('/listOrdenes',[App\Http\Controllers\OrdenController::class,'getOrdenes'])->name('ordenes.list');
 Route::post('/detalles',[App\Http\Controllers\OrdenController::class,'data'])->name('ordenes.data');
-
+Route::post('/estatus',[App\Http\Controllers\OrdenController::class,'estatus'])->name('ordenes.estatus');
+Route::post('/estatusCan',[App\Http\Controllers\OrdenController::class,'estatusCan'])->name('ordenes.estatusCan');

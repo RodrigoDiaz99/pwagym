@@ -1,10 +1,11 @@
+const $gridExpediente = $("#table_ordenes");
 $(function ($) {
     $.ajaxSetup({
         headers: { "X-CSRF-Token": $("meta[name=csrf-token]").attr("content") },
     });
 
     /**bootstrap table del grid de expediente */
-    const $gridExpediente = $("#table_ordenes");
+
 
     $gridExpediente.bootstrapTable({
         url: routePedidos,
@@ -51,65 +52,240 @@ $(function ($) {
 
 function accionesFormatter(value, row) {
     let html = "";
-    console.log(row);
-    //<a href="javascript:void(0);" onclick="subirDocumento('${cTipo}',${iIDSolicitud}, ${iIDAnioFiscal},${lActa},${lApendice},${lDerechos},${lDescripcion},${lEstatutos},${CanRect},${iID},'${inmobiliario}',${lAviso},${iIDControlActa},${lPlanos})" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;
+    console.log(row.estatus);
+    //<a href="javascript:void(0);" onclick="estatusChange('${cTipo}',${iIDSolicitud}, ${iIDAnioFiscal},${lActa},${lApendice},${lDerechos},${lDescripcion},${lEstatutos},${CanRect},${iID},'${inmobiliario}',${lAviso},${iIDControlActa},${lPlanos})" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;
     html +=
-        '<a href="javascript:void(0);" onclick="detalles('+row.id+')" class="btn btn-round btn-primary btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-info-circle"></i></a>&nbsp;';
+        '<a href="javascript:void(0);" onclick="detalles(' +
+        row.id +
+        ')" class="btn btn-round btn-primary btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-info-circle"></i></a>&nbsp;';
     switch (row.estatus) {
+
         case "ENVIADO":
             html +=
-            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                row.id +
+                "," +
+                "'AC'" +
+                ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Aceptar"><i class="fas fa-retweet"></i></a>&nbsp;';
+            html +=
+                '<a href="javascript:void(0);" onclick="estatusChangeCan(' +
+                row.id +
+                "," +
+                "'CAN'" +
+                ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-retweet"></i></a>&nbsp;';
             break;
         case "ACEPTADO":
+            console.log("entro")
             html +=
-            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                row.id +
+                "," +
+                "'PREP'"+
+            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Elaboracion"><i class="fas fa-retweet"></i></a>&nbsp;';
+            console.log(html)
             break;
         case "PREPARACION":
             html +=
-            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                row.id +
+                "," +
+                "'LIS'"+
+            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Listo"><i class="fas fa-retweet"></i></a>&nbsp;';
             break;
         case "CANCELADO":
             html +=
-            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                row.id +
+                "," +
+                "'MOT'"+
+            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Motivo Cancelado"><i class="fas fa-retweet"></i></a>&nbsp;';
             break;
-        case "TERMINADO":
+        case "LISTO":
             html +=
-            '<a href="javascript:void(0);" onclick="subirDocumento('+row.id+')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;';
+                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                row.id +
+                "," +
+                "'FINALIZADO'"+
+            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Entregado"><i class="fas fa-retweet"></i></a>&nbsp;';
             break;
-
     }
     return html;
 }
 
 function detalles(iIDPedido) {
     $.ajax({
-      url: routeData,
+        url: routeData,
+        type: "post",
+        encoding: "UTF-8",
+        async: true,
+        cache: false,
+        data: {
+            iIDPedido: iIDPedido,
+        },
+        beforeSend: function () {
+            NProgress.start();
+            NProgress.set(0.4);
+            Swal.fire({
+                title: "Detalles",
+                text: "Buscando Datos del Pedido",
+                onOpen: () => {
+                    swal.showLoading();
+                },
+            });
+        },
+        success: function (data) {
+            console.log(data);
+            Swal.close();
+            NProgress.done();
+
+            modalDetalles(data);
+
+            //  modalMotivos(res,stringified)
+        },
+        error: function (err) {
+            Swal.close();
+            alert(err);
+            NProgress.done();
+            alert("Problemas con el procedimiento.");
+        },
+    });
+}
+function modalDetalles(data) {
+    console.log(data);
+    $("#ModalPedidos").modal("show");
+    var lstProdu = data[0].lstprodu;
+    var total = data[0].total;
+
+    var ul = document.getElementById("lista-productos");
+
+    lstProdu.forEach(function (producto) {
+        var li = document.createElement("li"); // Crear elemento <li>
+        li.textContent =
+            producto.producto + " - Cantidad: " + producto.cantidad;
+        ul.appendChild(li); // Agregar <li> al <ul>
+        var totalSpan = document.getElementById("total-span");
+        totalSpan.textContent = "Total $" + total;
+    });
+}
+function estatusChange(iIDPedido, cEstatus) {
+    $.ajax({
+        url: routeEstatus,
+        type: "post",
+        encoding: "UTF-8",
+        async: true,
+        cache: false,
+        data: {
+            iIDPedido: iIDPedido,
+            cEstatus: cEstatus,
+        },
+        beforeSend: function () {
+            NProgress.start();
+            NProgress.set(0.4);
+            Swal.fire({
+                title: "Aviso",
+                text: "Validando Cambios",
+                onOpen: () => {
+                    swal.showLoading();
+                },
+            });
+        },
+        success: function (data) {
+            console.log(data);
+            Swal.close();
+            NProgress.done();
+            if (data.lSuccess == true) {
+                swal.fire({
+                    icon: "success",
+                    title: "Éxito",
+                    text: "Estatus actualizado correctamente",
+                    confirmButtonText: "Aceptar",
+                });
+                $gridExpediente.bootstrapTable('removeAll');
+                $gridExpediente.bootstrapTable('refresh');
+            } else {
+                swal.fire({
+                    icon: "error",
+                    title: "Ups...",
+                    text: "No se pudo cambiar el error",
+                    confirmButtonText: "Aceptar",
+                });
+            }
+
+            //  modalMotivos(res,stringified)
+        },
+        error: function (err) {
+            Swal.close();
+            alert(err);
+            NProgress.done();
+            alert("Problemas con el procedimiento.");
+        },
+    });
+}
+function estatusChangeCan(iIDPedido, cEstatus) {
+    Swal.fire({
+      title: "Detalles",
+      text: "Ingrese el motivo de la Cancelacion:",
+      input: 'textarea',
+      inputLabel: 'Motivo',
+      inputPlaceholder: 'Ingrese el motivo aquí...',
+      inputAttributes: {
+        'aria-label': 'Motivo'
+      },
+      showCancelButton: true,
+      preConfirm: function (motivo) {
+        if (!motivo) {
+          Swal.showValidationMessage('Debe ingresar un motivo');
+        } else {
+          enviarSolicitudAjax(iIDPedido, cEstatus, motivo);
+        }
+      }
+    });
+  }
+
+  function enviarSolicitudAjax(iIDPedido, cEstatus, motivo) {
+    $.ajax({
+      url: routeCan,
       type: "post",
       encoding: "UTF-8",
       async: true,
       cache: false,
       data: {
         iIDPedido: iIDPedido,
-
+        cEstatus: cEstatus,
+        motivo: motivo // Agregar el motivo al objeto data
       },
       beforeSend: function () {
         NProgress.start();
         NProgress.set(0.4);
         Swal.fire({
-          title: "Motivo",
-          text: "Buscando Motivo de la Suspensión...",
+          title: "Aviso",
+          text: "Validando Cambios",
           onOpen: () => {
             swal.showLoading();
           },
         });
       },
       success: function (data) {
+        console.log(data);
         Swal.close();
         NProgress.done();
-
-        modalMotivos(data);
-
-        //  modalMotivos(res,stringified)
+        if (data.lSuccess == true) {
+          swal.fire({
+            icon: "success",
+            title: "Éxito",
+            text: "Estatus actualizado correctamente",
+            confirmButtonText: "Aceptar",
+          });
+          $gridExpediente.bootstrapTable('removeAll');
+          $gridExpediente.bootstrapTable('refresh');
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Ups...",
+            text: "No se pudo cambiar el error",
+            confirmButtonText: "Aceptar",
+          });
+        }
       },
       error: function (err) {
         Swal.close();

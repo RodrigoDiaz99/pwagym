@@ -67,6 +67,7 @@ class PedidosController extends Controller
 
             // Obtener los datos de cada producto
             foreach ($productos as $nombre => $detalles) {
+
                 $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
                     ->join('inventories', 'inventories.products_id', '=', 'inventories.id')
                     ->where('products.requireInventory', 0)
@@ -77,13 +78,12 @@ class PedidosController extends Controller
 
                 if ($product) {
                     $cantidad = $detalles['cantidad'];
-
-                    for ($i = 0; $i < $cantidad; $i++) {
                         Product_Pedido::create([
+                            'cantidad'=>floatval( $cantidad),
                             'products_id' => $product->id,
                             'pedidos_id' => $pedido->id,
                         ]);
-                    }
+
 
                     // Realizar las operaciones necesarias con los datos del producto
                     // ...
@@ -94,6 +94,7 @@ class PedidosController extends Controller
             return back()->with('success', 'Se genero el pedido de manera exitosa');
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return back()->with('error', 'No se pudo generar el pedido, ' . $th->getMessage());
         }
 
