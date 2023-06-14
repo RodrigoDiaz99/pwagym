@@ -8,7 +8,7 @@
         }
     </style>
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Productos</h1>
+        <h1 class="h3 mb-0 text-gray-800">Pedidos</h1>
 
     </div>
     <div class="card px-2 mt-4 py-4">
@@ -49,5 +49,6 @@
     let routeData = "{{route('ordenes.data')}}"
     let routeEstatus = "{{route('ordenes.estatus')}}"
     let routeCan = "{{route('ordenes.estatusCan')}}"
+    let routeMotCan = "{{route('ordenes.MotivoCanc')}}"
 </script>
 @endsection

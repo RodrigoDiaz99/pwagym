@@ -12,13 +12,13 @@ class ProductosController extends Controller
     }
     public function productList()
     {
+
         $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
-        ->join('inventories', 'inventories.products_id', '=', 'inventories.id')
-        ->where('products.requireInventory', 0)
+        ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
+       ->where('products.requireInventory', 0)
         ->select('products.id', 'products.bar_code', 'products.name', 'inventories.sales_price')
 
         ->get();
-
 
         foreach ($product as $lstProduct) {
             $lista[] = array(

@@ -30,6 +30,7 @@ class OrdenController extends Controller
         $pedidos = Pedidos::where('id', $request->iIDPedido)->first();
 
         $producto_pedidos = Product_Pedido::where('pedidos_id', $pedidos->id)->get();
+
         $lstProdu = array(); // Mover la declaración del array fuera del bucle
 
         foreach ($producto_pedidos as $lstPP) {
@@ -107,6 +108,26 @@ class OrdenController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             DD($th);
+            return response()->json(["lSuccess" => false,
+                'cMensaje' => 'No se pudo cambiar el estatus']);
+        }
+
+    }
+    public function MotivoCanc(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $bitacora=BitacoraCancelacion::where('carts_id',$request->iIDPedido)
+            ->where('cSistema',$request->cSistema)
+            ->first();
+
+
+            DB::commit();
+            return response()->json(["lSuccess" => true, 'cMensaje' => $bitacora->motivo]);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
             return response()->json(["lSuccess" => false,
                 'cMensaje' => 'No se pudo cambiar el estatus']);
         }

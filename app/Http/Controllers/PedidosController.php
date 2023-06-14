@@ -16,7 +16,7 @@ class PedidosController extends Controller
     {
 
         $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
-            ->join('inventories', 'inventories.products_id', '=', 'inventories.id')
+            ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
             ->where('products.requireInventory', 0)
             ->select('products.id', 'products.bar_code',
                 'products.name', 'inventories.sales_price')
@@ -27,7 +27,7 @@ class PedidosController extends Controller
     {
 
         $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
-            ->join('inventories', 'inventories.products_id', '=', 'inventories.id')
+            ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
             ->where('products.requireInventory', 0)
             ->where('products.name', $request->producto)
             ->select('products.id', 'products.bar_code',
@@ -69,17 +69,17 @@ class PedidosController extends Controller
             foreach ($productos as $nombre => $detalles) {
 
                 $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
-                    ->join('inventories', 'inventories.products_id', '=', 'inventories.id')
+                    ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
                     ->where('products.requireInventory', 0)
                     ->where('products.name', $nombre)
                     ->select('products.id', 'products.bar_code',
                         'products.name', 'inventories.sales_price')
                     ->first(); // Utilizamos first() en lugar de get() para obtener solo un resultado en lugar de una colección
 
-                if ($product) {
+
                     $cantidad = $detalles['cantidad'];
                         Product_Pedido::create([
-                            'cantidad'=>floatval( $cantidad),
+                            'cantidad'=>$cantidad,
                             'products_id' => $product->id,
                             'pedidos_id' => $pedido->id,
                         ]);
@@ -87,7 +87,7 @@ class PedidosController extends Controller
 
                     // Realizar las operaciones necesarias con los datos del producto
                     // ...
-                }
+
                 // ...
             }
             DB::commit();

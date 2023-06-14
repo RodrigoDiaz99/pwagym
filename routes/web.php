@@ -36,3 +36,4 @@ Route::post('/listOrdenes',[App\Http\Controllers\OrdenController::class,'getOrde
 Route::post('/detalles',[App\Http\Controllers\OrdenController::class,'data'])->name('ordenes.data');
 Route::post('/estatus',[App\Http\Controllers\OrdenController::class,'estatus'])->name('ordenes.estatus');
 Route::post('/estatusCan',[App\Http\Controllers\OrdenController::class,'estatusCan'])->name('ordenes.estatusCan');
+Route::post('/MotivoCanc',[App\Http\Controllers\OrdenController::class,'MotivoCanc'])->name('ordenes.MotivoCanc');

@@ -15,7 +15,7 @@ $(function ($) {
         locale: "es-MX",
         pagination: true,
         pageSize: 10,
-
+        search:true,
         columns: [
             {
                 field: "iIDProducto",
@@ -72,7 +72,7 @@ function accionesFormatter(value, row) {
                 row.id +
                 "," +
                 "'CAN'" +
-                ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-retweet"></i></a>&nbsp;';
+                ')" class="btn btn-round btn-danger btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i></a>&nbsp;';
             break;
         case "ACEPTADO":
             console.log("entro")
@@ -94,13 +94,14 @@ function accionesFormatter(value, row) {
             break;
         case "CANCELADO":
             html +=
-                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                '<a href="javascript:void(0);" onclick="MotivoCanc(' +
                 row.id +
                 "," +
-                "'MOT'"+
-            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Motivo Cancelado"><i class="fas fa-retweet"></i></a>&nbsp;';
+                "'COMANDERA'"+
+            ')" class="btn btn-round btn-danger btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Motivo Cancelado"><i class="fa fa-inbox"></i></a>&nbsp;';
             break;
         case "LISTO":
+
             html +=
                 '<a href="javascript:void(0);" onclick="estatusChange(' +
                 row.id +
@@ -128,7 +129,7 @@ function detalles(iIDPedido) {
             Swal.fire({
                 title: "Detalles",
                 text: "Buscando Datos del Pedido",
-                onOpen: () => {
+                didOpen: () => {
                     swal.showLoading();
                 },
             });
@@ -157,13 +158,15 @@ function modalDetalles(data) {
     var total = data[0].total;
 
     var ul = document.getElementById("lista-productos");
-
+console.log( lstProdu)
     lstProdu.forEach(function (producto) {
         var li = document.createElement("li"); // Crear elemento <li>
+        console.log(li)
         li.textContent =
             producto.producto + " - Cantidad: " + producto.cantidad;
         ul.appendChild(li); // Agregar <li> al <ul>
         var totalSpan = document.getElementById("total-span");
+        console.log(totalSpan)
         totalSpan.textContent = "Total $" + total;
     });
 }
@@ -184,7 +187,7 @@ function estatusChange(iIDPedido, cEstatus) {
             Swal.fire({
                 title: "Aviso",
                 text: "Validando Cambios",
-                onOpen: () => {
+                didOpen: () => {
                     swal.showLoading();
                 },
             });
@@ -260,9 +263,9 @@ function estatusChangeCan(iIDPedido, cEstatus) {
         Swal.fire({
           title: "Aviso",
           text: "Validando Cambios",
-          onOpen: () => {
+          didOpen: () => {
             swal.showLoading();
-          },
+        },
         });
       },
       success: function (data) {
@@ -283,6 +286,59 @@ function estatusChangeCan(iIDPedido, cEstatus) {
             icon: "error",
             title: "Ups...",
             text: "No se pudo cambiar el error",
+            confirmButtonText: "Aceptar",
+          });
+        }
+      },
+      error: function (err) {
+        Swal.close();
+        alert(err);
+        NProgress.done();
+        alert("Problemas con el procedimiento.");
+      },
+    });
+  }
+
+  function MotivoCanc(iIDPedido, cSistema) {
+    $.ajax({
+      url: routeMotCan,
+      type: "post",
+      encoding: "UTF-8",
+      async: true,
+      cache: false,
+      data: {
+        iIDPedido: iIDPedido,
+        cSistema: cSistema,
+
+      },
+      beforeSend: function () {
+        NProgress.start();
+        NProgress.set(0.4);
+        Swal.fire({
+          title: "Aviso",
+          text: "Buscando Informacion",
+          didOpen: () => {
+            swal.showLoading();
+        },
+        });
+      },
+      success: function (data) {
+        console.log(data);
+        Swal.close();
+        NProgress.done();
+        if (data.lSuccess == true) {
+          swal.fire({
+            icon: "success",
+            title: "Motivo",
+            text: data.cMensaje,
+            confirmButtonText: "Aceptar",
+          });
+
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Ups...",
+            text: "No se encontro la informacion",
             confirmButtonText: "Aceptar",
           });
         }
