@@ -27,6 +27,17 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('styles/js/sb-admin-2.min.js') }}"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('{{asset('serviceWorker')}}').then(function(registration) {
+              console.log('Service Worker registrado con éxito:', registration);
+            }).catch(function(error) {
+              console.log('Error al registrar el Service Worker:', error);
+            });
+          });
+        }
+      </script>
 
 
 </head>

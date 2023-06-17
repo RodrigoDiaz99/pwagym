@@ -98,22 +98,22 @@
     <script src="{{ asset('styles/js/demo/chart-pie-demo.js') }}"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.1/bootstrap-table.min.css">
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.1/bootstrap-table.min.js"></script>
+    <script src="{{url('//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.13.1/bootstrap-table.min.js')}}"></script>
 
     <!-- Latest compiled and minified Locales -->
-    <script src="//cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-    <script src="//cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+    <script src="{{url('//cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js')}}" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="{{url('//cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js')}}" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
 
-    <script src="//unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table-locale-all.min.js"></script>
+    <script src="{{url('//unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table-locale-all.min.js')}}"></script>
 
 
     <script src="{{ url('//code.jquery.com/jquery-3.6.1.js') }}" crossorigin="anonymous"></script>
     <link href="{{ url('//cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css') }}" rel="stylesheet" />
     <script src="{{ url('//cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js') }}"></script>
-    <script src="//unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js"></script>
+    <script src="{{url('//unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js')}}"></script>
 
-    <script src="//code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+    <script src="{{url('//code.jquery.com/ui/1.13.2/jquery-ui.js')}}"></script>
+    <script src="{{url('//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js')}}"></script>
 
 
     @yield('scripts')
