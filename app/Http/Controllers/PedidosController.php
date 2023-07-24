@@ -15,12 +15,10 @@ class PedidosController extends Controller
     public function index()
     {
 
-        $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
-            ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
-            ->where('products.requireInventory', 0)
-            ->select('products.id', 'products.bar_code',
-                'products.name', 'inventories.sales_price')
-            ->get();
+        $product = Product::join('inventories', 'products.id', '=', 'inventories.products_id')
+
+        ->select('products.id', 'products.bar_code', 'products.name', 'inventories.sales_price')
+        ->get();
         return view('pedidos.index', compact('product'));
     }
     public function getData(Request $request)
@@ -56,7 +54,7 @@ class PedidosController extends Controller
                 'price' => $totalCompra,
                 'users_id' => $usuario->id,
             ]);
-            $reference = mt_rand(00000000001, 9999999990);
+            $reference = mt_rand(1, 990);
             $ordenNumber = '000' . $pedido->id;
             $referenceLine = $pedido->id . $reference . "COM";
 

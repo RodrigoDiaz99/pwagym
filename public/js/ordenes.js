@@ -24,6 +24,7 @@ $(function ($) {
             {
                 field: "orden_number",
                 title: "#",
+                visible: false,
             },
             {
                 field: "reference_line",
@@ -36,6 +37,7 @@ $(function ($) {
             {
                 field: "price",
                 title: "Total",
+                visible: false,
             },
             {
                 field: "cedicion",

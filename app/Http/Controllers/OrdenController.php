@@ -107,7 +107,7 @@ class OrdenController extends Controller
             return response()->json(["lSuccess" => true, 'cMEnsaje' => 'Estatus cambiado de manera exitosa']);
         } catch (\Throwable $th) {
             DB::rollBack();
-            DD($th);
+
             return response()->json(["lSuccess" => false,
                 'cMensaje' => 'No se pudo cambiar el estatus']);
         }
