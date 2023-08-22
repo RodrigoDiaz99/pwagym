@@ -48,4 +48,10 @@ class Product extends Model
     {
         return $this->HasOne(CategoryProduct::class, 'id', 'category_products_id');
     }
+
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class, 'products_id'); // Usa la clave foránea correcta
+    }
+
 }

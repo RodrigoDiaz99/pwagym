@@ -17,8 +17,8 @@ class PedidosController extends Controller
 
         $product = Product::join('inventories', 'products.id', '=', 'inventories.products_id')
 
-        ->select('products.id', 'products.bar_code', 'products.name', 'inventories.sales_price')
-        ->get();
+            ->select('products.id', 'products.bar_code', 'products.name', 'inventories.sales_price')
+            ->get();
         return view('pedidos.index', compact('product'));
     }
     public function getData(Request $request)
@@ -26,7 +26,7 @@ class PedidosController extends Controller
 
         $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
             ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
-            ->where('products.requireInventory', 0)
+            ->where('inventories.status', 'Disponible')
             ->where('products.name', $request->producto)
             ->select('products.id', 'products.bar_code',
                 'products.name', 'inventories.sales_price')
@@ -68,23 +68,21 @@ class PedidosController extends Controller
 
                 $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
                     ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
-                    ->where('products.requireInventory', 0)
+                    ->where('inventories.status', 'Disponible')
                     ->where('products.name', $nombre)
                     ->select('products.id', 'products.bar_code',
                         'products.name', 'inventories.sales_price')
                     ->first(); // Utilizamos first() en lugar de get() para obtener solo un resultado en lugar de una colección
 
+                $cantidad = $detalles['cantidad'];
+                Product_Pedido::create([
+                    'cantidad' => $cantidad,
+                    'products_id' => $product->id,
+                    'pedidos_id' => $pedido->id,
+                ]);
 
-                    $cantidad = $detalles['cantidad'];
-                        Product_Pedido::create([
-                            'cantidad'=>$cantidad,
-                            'products_id' => $product->id,
-                            'pedidos_id' => $pedido->id,
-                        ]);
-
-
-                    // Realizar las operaciones necesarias con los datos del producto
-                    // ...
+                // Realizar las operaciones necesarias con los datos del producto
+                // ...
 
                 // ...
             }

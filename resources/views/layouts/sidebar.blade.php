@@ -48,6 +48,12 @@
             <span>Pedidos</span></a>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link" href="{{route('listado.view')}}">
+            <i class="fa fa-list"></i>
+            <span>Comanda</span></a>
+    </li>
+
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

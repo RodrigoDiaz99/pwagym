@@ -54,6 +54,7 @@ class OrdenController extends Controller
     }
     public function estatus(Request $request)
     {
+
         try {
             $pedidos = Pedidos::where('id', $request->iIDPedido)->first();
             switch ($request->cEstatus) {
@@ -69,7 +70,7 @@ class OrdenController extends Controller
                         'estatus' => "PREPARACION",
                     ]);
                     break;
-                case "LIST":
+                case "LIS":
                     $pedidos->update([
 
                         'estatus' => "LISTO",
