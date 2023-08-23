@@ -52,4 +52,5 @@ Route::controller(ListadoController::class)->group(function () {
     Route::get('lista', 'index')->name('listado.view');
     Route::post('getLista', 'getLista')->name('getLista');
     Route::post('verProductos', 'verProductos')->name('verProductos');
+    Route::post('finalizar', 'finalizar')->name('finalizar');
 });

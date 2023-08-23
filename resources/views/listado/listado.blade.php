@@ -47,5 +47,6 @@
 <script>
     let routeLista = "{{route('getLista')}}"
     let routeData = "{{route('verProductos')}}"
+    let finalizado ="{{route('finalizar')}}"
 </script>
 @endsection

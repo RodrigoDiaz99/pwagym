@@ -57,58 +57,10 @@ function accionesFormatter(value, row) {
         '<a href="javascript:void(0);" onclick="verPedido(' +
         row.id +
         ')" class="btn btn-round btn-primary btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Ver Pedidos"><i class="fas fa-info-circle"></i></a>&nbsp;';
-    switch (row.estatus) {
-
-        case "ENVIADO":
-            html +=
-                '<a href="javascript:void(0);" onclick="estatusChange(' +
-                row.id +
-                "," +
-                "'AC'" +
-                ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Aceptar"><i class="fas fa-retweet"></i></a>&nbsp;';
-            html +=
-                '<a href="javascript:void(0);" onclick="estatusChangeCan(' +
-                row.id +
-                "," +
-                "'CAN'" +
-                ')" class="btn btn-round btn-danger btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i></a>&nbsp;';
-            break;
-        case "ACEPTADO":
-            console.log("entro")
-            html +=
-                '<a href="javascript:void(0);" onclick="estatusChange(' +
-                row.id +
-                "," +
-                "'PREP'"+
-            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Elaboracion"><i class="fas fa-retweet"></i></a>&nbsp;';
-            console.log(html)
-            break;
-        case "PREPARACION":
-            html +=
-                '<a href="javascript:void(0);" onclick="estatusChange(' +
-                row.id +
-                "," +
-                "'LIS'"+
-            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Listo"><i class="fas fa-retweet"></i></a>&nbsp;';
-            break;
-        case "CANCELADO":
-            html +=
-                '<a href="javascript:void(0);" onclick="MotivoCanc(' +
-                row.id +
-                "," +
-                "'COMANDERA'"+
-            ')" class="btn btn-round btn-danger btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Motivo Cancelado"><i class="fa fa-inbox"></i></a>&nbsp;';
-            break;
-        case "LISTO":
-
-            html +=
-                '<a href="javascript:void(0);" onclick="estatusChange(' +
-                row.id +
-                "," +
-                "'FINALIZADO'"+
-            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Entregado"><i class="fas fa-retweet"></i></a>&nbsp;';
-            break;
-    }
+        html +=
+        '<a href="javascript:void(0);" onclick="estatusChange(' +
+        row.id +
+             ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Aceptar"><i class="fas fa-retweet"></i></a>&nbsp;';
     return html;
 }
 
@@ -159,28 +111,28 @@ function modalDetalles(data) {
 
     ul.innerHTML = ""; // Limpia la lista antes de agregar productos
 
-    data.forEach(function (producto) {
+    data.productos.forEach(function (producto) {
         var li = document.createElement("li");
         li.textContent =
-            producto.name + " - Cantidad: " + producto.cantidad;
+            producto.name + " - Cantidad: " + producto.cantidad + " - Precio de Venta: $" + producto.sales_price_total;
         ul.appendChild(li);
     });
 
-    totalSpan.textContent = "Total $" + data[0].total;
+    totalSpan.textContent = "Total $" + data.totalPedido;
 }
 
 
 
-function estatusChange(iIDPedido, cEstatus) {
+function estatusChange(iIDPedido) {
     $.ajax({
-        url: routeEstatus,
+        url: finalizado,
         type: "post",
         encoding: "UTF-8",
         async: true,
         cache: false,
         data: {
             iIDPedido: iIDPedido,
-            cEstatus: cEstatus,
+
         },
         beforeSend: function () {
             NProgress.start();

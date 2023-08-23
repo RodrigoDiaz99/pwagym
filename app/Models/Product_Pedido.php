@@ -16,5 +16,6 @@ class Product_Pedido extends Model
         'cantidad',
         'products_id',
         'pedidos_id',
+        'lActivo'
     ];
 }

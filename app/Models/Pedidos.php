@@ -14,7 +14,7 @@ class Pedidos extends Model
 
     public function productos()
     {
-        return $this->belongsToMany(Product::class, 'product_pedidos', 'pedidos_id', 'products_id');
-           // ->where('lActivo', true);
+        return $this->belongsToMany(Product::class, 'product_pedidos', 'pedidos_id', 'products_id')
+            ->where('lActivo', true);
     }
 }

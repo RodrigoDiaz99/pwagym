@@ -43,7 +43,12 @@ class PedidosController extends Controller
             $totalCompra = $request->input('totalCompra');
 
             $user = $request->input('code_user');
-            $usuario = User::where('code_user', $user)->first();
+            $usuario = User::where(function ($query) use ($user) {
+                $query->where('code_user', $user)
+                      ->orWhere('id', $user)
+                      ->orWhere('username',$user); // Agrega aquí los campos adicionales que quieras verificar
+            })->first();
+
             if (is_null($usuario)) {
                 throw new Exception('No se encontro el usuario con ese codigo');
             }
@@ -79,6 +84,7 @@ class PedidosController extends Controller
                     'cantidad' => $cantidad,
                     'products_id' => $product->id,
                     'pedidos_id' => $pedido->id,
+                    'lActivo'=>true
                 ]);
 
                 // Realizar las operaciones necesarias con los datos del producto
