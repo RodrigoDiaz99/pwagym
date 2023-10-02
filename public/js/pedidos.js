@@ -54,6 +54,7 @@ $(function ($) {
     var total = 0; // Variable para calcular el total de la compra
 
     for (var producto in productos) {
+        console.log(productos);
         var item = productos[producto];
         var cantidad = item.cantidad;
         var precioUnitario = item.precio;

@@ -10,48 +10,31 @@ class Product extends Model
 {
     use HasFactory;
     use SoftDeletes;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-
-    protected $fillable = ['bar_code', 'name', 'product_units_id', 'description', 'providers_id', 'requireInventory', 'category_products_id'];
-
-    /*
-     * Get all of the Units for the Product
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function productUnit()
+    protected $table = "productos";
+    protected $fillable = [
+        'codigo_barras',
+        'nombre_producto',
+        'proveedores_id',
+        'categoria_productos_id',
+        'inventario',
+        'cantidad_producto',
+        'alerta_minima',
+        'alert_maxima',
+        'precio_venta',
+        'users_id',
+        'estatus',
+    ];
+    public function proveedor()
     {
-        return $this->HasOne(ProductUnit::class, 'id', 'product_units_id');
+        return $this->belongsTo(Proveedores::class, 'proveedores_id');
     }
-
-    /*
-     * Get all of the Providers for the Product
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function productProvider()
+    public function categoria()
     {
-        return $this->HasOne(Provider::class, 'id', 'providers_id');
+        return $this->belongsTo(CategoriaProductos::class, 'categoria_productos_id');
     }
-
-    /*
-     * Get all of the Category for the Product
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function productCategory()
+    public function usuario()
     {
-        return $this->HasOne(CategoryProduct::class, 'id', 'category_products_id');
-    }
-
-    public function inventory()
-    {
-        return $this->hasOne(Inventory::class, 'products_id'); // Usa la clave foránea correcta
+        return $this->belongsTo(User::class, 'users_id');
     }
 
 }

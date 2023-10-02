@@ -30,7 +30,7 @@
                                             <option value="">Seleccione una Opcion</option>
 
                                             @foreach ($product as $row)
-                                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                                <option value="{{ $row->id }}">{{ $row->nombre_producto }}</option>
                                             @endforeach
 
                                         </select>

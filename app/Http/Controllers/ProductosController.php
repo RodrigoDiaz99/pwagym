@@ -16,23 +16,14 @@ class ProductosController extends Controller
 
 
 
-        $product = Product::join('inventories', 'products.id', '=', 'inventories.products_id')
-        ->select('products.id', 'products.bar_code', 'products.name', 'inventories.sales_price')
+        $products = Product::where('estatus', 'Disponible')
+        ->where(function ($query) {
+            $query->where('inventario', true)->where('cantidad_producto', '>', 0);
+        })
+        ->orWhere('inventario', false)
         ->get();
 
 
-
-        foreach ($product as $lstProduct) {
-            $lista[] = array(
-                'iIDProducto' => $lstProduct->id,
-                'cNombreProduct' => $lstProduct->name,
-                'cCodeBar' => $lstProduct->bar_code,
-                'price' => $lstProduct->sales_price,
-
-            );
-        }
-
-        return response()->json($lista);
-
+return $products;
     }
 }

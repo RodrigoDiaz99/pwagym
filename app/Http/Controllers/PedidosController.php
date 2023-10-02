@@ -15,22 +15,34 @@ class PedidosController extends Controller
     public function index()
     {
 
-        $product = Product::join('inventories', 'products.id', '=', 'inventories.products_id')
+        $product = Product::where('estatus', 'Disponible')
+        ->where(function ($query) {
+            $query->where('inventario', true)->where('cantidad_producto', '>', 0);
+        })
+        ->orWhere('inventario', false)
+        ->get();
 
-            ->select('products.id', 'products.bar_code', 'products.name', 'inventories.sales_price')
-            ->get();
         return view('pedidos.index', compact('product'));
     }
     public function getData(Request $request)
     {
-
-        $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
-            ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
-            ->where('inventories.status', 'Disponible')
-            ->where('products.name', $request->producto)
-            ->select('products.id', 'products.bar_code',
-                'products.name', 'inventories.sales_price')
-            ->get();
+        $product = Product::where('estatus', 'Disponible')
+        ->where('nombre_producto', $request->producto)
+        ->where(function ($query) {
+            $query->where('inventario', true)->where('cantidad_producto', '>', 0);
+        })
+        ->orWhere('inventario', false)
+         ->select('id', 'codigo_barras as bar_code',
+          'nombre_producto as name', 'precio_venta as sales_price')
+        ->get();
+        // ->where('products.name', $request->producto)
+        // $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
+        //     ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
+        //     ->where('inventories.status', 'Disponible')
+        //     ->where('nombre_producto.name', $request->producto)
+        //     ->select('products.id', 'products.bar_code',
+        //         'products.name', 'inventories.sales_price')
+        //     ->get();
         return $product;
     }
 

@@ -21,7 +21,7 @@ $(function ($) {
                 visible: false,
             },
             {
-                field: "cNombreProduct",
+                field: "nombre_producto",
                 title: "Producto",
             },
 
@@ -43,9 +43,9 @@ function accionesFormatter(value, row) {
     let html = "";
     console.log(row);
    html+='<a href="javascript:void(0);"  onclick="ModalDetalles(' +
-    row.cCodeBar +
+    row.codigo_barras +
     "," +
-    row.price +
+    row.precio_venta +
     ')" class="btn btn-round btn-primary btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-info-circle"></i></a>&nbsp;';
 
     return html;
