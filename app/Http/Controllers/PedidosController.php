@@ -35,14 +35,7 @@ class PedidosController extends Controller
          ->select('id', 'codigo_barras as bar_code',
           'nombre_producto as name', 'precio_venta as sales_price')
         ->get();
-        // ->where('products.name', $request->producto)
-        // $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
-        //     ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
-        //     ->where('inventories.status', 'Disponible')
-        //     ->where('nombre_producto.name', $request->producto)
-        //     ->select('products.id', 'products.bar_code',
-        //         'products.name', 'inventories.sales_price')
-        //     ->get();
+
         return $product;
     }
 
@@ -54,11 +47,11 @@ class PedidosController extends Controller
             $productos = json_decode($request->input('productos'), true);
             $totalCompra = $request->input('totalCompra');
 
-            $user = $request->input('code_user');
+            $user = $request->input('codigo_usuario');
             $usuario = User::where(function ($query) use ($user) {
-                $query->where('code_user', $user)
+                $query->where('codigo_usuario', $user)
                       ->orWhere('id', $user)
-                      ->orWhere('username',$user); // Agrega aquí los campos adicionales que quieras verificar
+                      ->orWhere('usuario',$user); // Agrega aquí los campos adicionales que quieras verificar
             })->first();
 
             if (is_null($usuario)) {
