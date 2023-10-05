@@ -24,6 +24,5 @@ Route::prefix('pedidos')->name('pedidos.')->controller(PedidosController::class)
 Route::prefix('orden')->name('orden.')->controller(OrdenController::class)->group(function () {
     Route::get('/', 'index')->name('index');
     Route::post('getProducto', 'getProducto')->name('getProducto');
-    Route::post('getDetalles', 'getDetalles')->name('getDetalles');
-    Route::post('updateEstatus', 'updateEstatus')->name('updateEstatus');
+    Route::post('enviarOrden', 'enviarOrden')->name('enviarOrden');
 });

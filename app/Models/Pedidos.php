@@ -10,7 +10,7 @@ class Pedidos extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['orden_number', 'reference_line', 'estatus', 'price', 'users_id'];
+    protected $fillable = ['numero_orden', 'linea_referencia', 'estatus', 'precio', 'users_id'];
 
     public function productos()
     {

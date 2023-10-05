@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pedidos;
 use App\Models\Product;
+use App\Models\Product_Pedido;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrdenController extends Controller
 {
@@ -32,74 +37,58 @@ class OrdenController extends Controller
             ->get();
     }
 
-    public function realizacion(Request $request)
+    public function enviarOrden(Request $request)
     {
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
 
-            $productos = json_decode($request->input('productos'), true);
-            $totalCompra = $request->input('totalCompra');
+            $productos = $request->productos;
+            $totalCompra = $request->total_venta;
 
-            $user = $request->input('codigo_usuario');
-            $usuario = User::where(function ($query) use ($user) {
-                $query->where('codigo_usuario', $user)
-                    ->orWhere('id', $user)
-                    ->orWhere('usuario', $user); // Agrega aquí los campos adicionales que quieras verificar
-            })->first();
+            $user = $request->codigo_usuario;
+            $usuario = User::where('codigo_usuario', $user)->first();
 
             if (is_null($usuario)) {
                 throw new Exception('No se encontro el usuario con ese codigo');
             }
+
             $pedido = Pedidos::create([
-                'orden_number' => 0,
-                'reference_line' => 0,
+                'numero_orden' => 0,
+                'linea_referencia' => 0,
                 'estatus' => 'ENVIADO',
-                'price' => $totalCompra,
+                'precio' => $totalCompra,
                 'users_id' => $usuario->id,
             ]);
-            $reference = mt_rand(1, 990);
-            $ordenNumber = '000' . $pedido->id;
-            $referenceLine = $pedido->id . $reference . "COM";
+            $numero_orden = '000' . $pedido->id;
+            $linea_referencia = $pedido->id .  mt_rand(1, 990) . "COM";
 
             $pedido->update([
-                'orden_number' => $ordenNumber,
-                'reference_line' => $referenceLine,
+                'numero_orden' => $numero_orden,
+                'linea_referencia' => $linea_referencia,
             ]);
 
             // Obtener los datos de cada producto
-            foreach ($productos as $nombre => $detalles) {
-
-                $product = Product::join('category_products', 'products.category_products_id', '=', 'category_products.id')
-                    ->join('inventories', 'inventories.products_id', '=', 'inventories.products_id')
-                    ->where('inventories.status', 'Disponible')
-                    ->where('products.name', $nombre)
-                    ->select(
-                        'products.id',
-                        'products.bar_code',
-                        'products.name',
-                        'inventories.sales_price'
-                    )
-                    ->first(); // Utilizamos first() en lugar de get() para obtener solo un resultado en lugar de una colección
-
-                $cantidad = $detalles['cantidad'];
+            foreach ($productos as $producto) {
                 Product_Pedido::create([
-                    'cantidad' => $cantidad,
-                    'products_id' => $product->id,
+                    'cantidad' => $producto['unidades'],
+                    'productos_id' => $producto['id'],
                     'pedidos_id' => $pedido->id,
                     'lActivo' => true
                 ]);
-
-                // Realizar las operaciones necesarias con los datos del producto
-                // ...
-
-                // ...
             }
+
             DB::commit();
-            return back()->with('success', 'Se genero el pedido de manera exitosa');
-        } catch (\Throwable $th) {
+            return response()->json([
+                'lSuccess' => true,
+                'cMensaje' => "Se genero el pedido de manera exitosa",
+            ]);
+        } catch (Exception $ex) {
             DB::rollBack();
 
-            return back()->with('error', 'No se pudo generar el pedido, ' . $th->getMessage());
+            return response()->json([
+                'lSuccess' => false,
+                'cMensaje' => $ex->getMessage(),
+            ]);
         }
     }
 }

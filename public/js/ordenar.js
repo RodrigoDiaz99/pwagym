@@ -48,12 +48,14 @@ $(function ($) {
                 title: 'Precio unitario',
                 width: 15,
                 widthUnit: "%",
+                formatter: PrecioFormatter
             },
             {
                 field: 'total_venta',
                 title: 'Subtotal',
                 width: 15,
                 widthUnit: "%",
+                formatter: PrecioFormatter,
                 footerFormatter: footerFormatter
             },
             {
@@ -116,10 +118,84 @@ function eliminarProducto(id) {
     productosTable.bootstrapTable('removeByUniqueId', id);
 
 }
+
+function enviarOrden() {
+    $("#err_codigo_usuario").hide();
+    let codigo_usuario = $("#codigo_usuario").val();
+    let productos = productosTable.bootstrapTable('getData');
+    if (productos.length <= 0) {
+        $("#err_productosTable").show();
+        return false;
+    }
+    if (codigo_usuario == '') {
+        $("#err_codigo_usuario").show();
+        return false;
+    }
+
+    if (productosTable.bootstrapTable('getData'))
+
+
+        $.ajax({
+            url: routeEnviarOrden,
+            type: "post",
+            dataType: "json",
+            encoding: "UTF-8",
+            data: {
+                productos: productos,
+                total_venta: $("#totalVenta").val(),
+                codigo_usuario: codigo_usuario
+            },
+            beforeSend: function () {
+                Swal.fire({
+                    title: 'Enviando',
+                    text: 'Enviando orden, espere un momento...',
+                });
+                Swal.showLoading();
+            },
+            success: function (data) {
+                Swal.close();
+                if (data.lSuccess) {
+                    Swal.fire({
+                        title: "Correcto",
+                        text: "Se aplicaron los cambios correctamente",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        text: data.cMensaje,
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    title: "Error",
+                    text: "Ocurrió un error desconocido.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                });
+            }
+        })
+}
 //#endregion
 
 //#region onEvent
+
+$("#codigo_usuario").on('input', function () {
+    if ($(this).val() != '') {
+        $("#err_codigo_usuario").hide();
+    } else {
+        $("#err_codigo_usuario").show();
+
+    }
+})
+
 selectProductos.on("select2:select", function () {
+    $("#err_productosTable").hide();
+
     let seleccionActual = $("#selectProductos option:selected");
     let seleccionActualID = seleccionActual.val();
     let verificarFila = productosTable.bootstrapTable('getRowByUniqueId', seleccionActualID);
@@ -158,11 +234,19 @@ selectProductos.on("select2:select", function () {
 //#region formatters
 function footerFormatter(data) {
     var field = 'total_venta'
-    return '$' + data.map(function (row) {
+
+    let suma = data.map(function (row) {
         return +row[field]
     }).reduce(function (sum, i) {
         return sum + i
-    }, 0)
+    }, 0);
+    $("#totalVenta").val(suma)
+
+    return '$' + suma
+}
+
+function PrecioFormatter(value, row) {
+    return '$' + value;
 }
 
 function AccionesFormatter(value, row) {
