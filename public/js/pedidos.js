@@ -1,159 +1,355 @@
+const $gridExpediente = $("#table_ordenes");
 $(function ($) {
     $.ajaxSetup({
         headers: { "X-CSRF-Token": $("meta[name=csrf-token]").attr("content") },
     });
 
-    const $searchProduct = $("#searchProduct");
-    var productos = {}; // Objeto para almacenar los productos y sus cantidades
+    /**bootstrap table del grid de expediente */
 
-    $searchProduct.select2({
-        width: "100%",
-        placeholder: "Seleccione una Opcion",
-        language: {
-            noResults: () => "No hay resultado",
-            searching: () => "Buscando..",
-        },
-    });
 
-    $("#searchProduct").on("select2:select", function (e) {
-        var producto = e.params.data.text;
-        agregarProducto(producto);
-        limpiarSeleccion();
-    });
-
-    function agregarProducto(producto) {
-        $.ajax({
-            url:routedata,
-            type: 'POST',
-            data: { producto: producto },
-            success: function (response) {
-                var precioUnitario = response[0].sales_price;
-                if (productos.hasOwnProperty(producto)) {
-                    // Si el producto ya existe en el carrito, se incrementa la cantidad
-                    productos[producto].cantidad++;
-                } else {
-                    // Si el producto no existe en el carrito, se agrega con cantidad 1 y el precio obtenido
-                    productos[producto] = {
-                        cantidad: 1,
-                        precio: precioUnitario
-                    };
-                }
-                actualizarListaProductos();
-                actualizarTotalCompra();
+    $gridExpediente.bootstrapTable({
+        url: routePedidos,
+        classes: "table-striped",
+        method: "post",
+        contentType: "application/x-www-form-urlencoded",
+        locale: "es-MX",
+        pagination: true,
+        pageSize: 10,
+        search:true,
+        columns: [
+            {
+                field: "iIDProducto",
+                visible: false,
             },
-            error: function (error) {
-                console.error(error);
-            }
-        });
+            {
+                field: "orden_number",
+                title: "#",
+                visible: false,
+            },
+            {
+                field: "reference_line",
+                title: "Referencia",
+            },
+            {
+                field: "estatus",
+                title: "Estatus",
+            },
+            {
+                field: "price",
+                title: "Total",
+                visible: false,
+            },
+            {
+                field: "cedicion",
+                title: "Acciones",
+                formatter: "accionesFormatter",
+            },
+        ],
+    });
+    $("#btnClose", "#btnCerrar").on("click", function () {
+        $("#cCodeBar").val("");
+        $("#price").val("");
+    });
+});
+
+function accionesFormatter(value, row) {
+    let html = "";
+    console.log(row.estatus);
+    //<a href="javascript:void(0);" onclick="estatusChange('${cTipo}',${iIDSolicitud}, ${iIDAnioFiscal},${lActa},${lApendice},${lDerechos},${lDescripcion},${lEstatutos},${CanRect},${iID},'${inmobiliario}',${lAviso},${iIDControlActa},${lPlanos})" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-retweet"></i></a>&nbsp;
+    html +=
+        '<a href="javascript:void(0);" onclick="detalles(' +
+        row.id +
+        ')" class="btn btn-round btn-primary btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-info-circle"></i></a>&nbsp;';
+    switch (row.estatus) {
+
+        case "ENVIADO":
+            html +=
+                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                row.id +
+                "," +
+                "'AC'" +
+                ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Aceptar"><i class="fas fa-retweet"></i></a>&nbsp;';
+            html +=
+                '<a href="javascript:void(0);" onclick="estatusChangeCan(' +
+                row.id +
+                "," +
+                "'CAN'" +
+                ')" class="btn btn-round btn-danger btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i></a>&nbsp;';
+            break;
+        case "ACEPTADO":
+            console.log("entro")
+            html +=
+                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                row.id +
+                "," +
+                "'PREP'"+
+            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Elaboracion"><i class="fas fa-retweet"></i></a>&nbsp;';
+            console.log(html)
+            break;
+        case "PREPARACION":
+            html +=
+                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                row.id +
+                "," +
+                "'LIS'"+
+            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Listo"><i class="fas fa-retweet"></i></a>&nbsp;';
+            break;
+        case "CANCELADO":
+            html +=
+                '<a href="javascript:void(0);" onclick="MotivoCanc(' +
+                row.id +
+                "," +
+                "'COMANDERA'"+
+            ')" class="btn btn-round btn-danger btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Motivo Cancelado"><i class="fa fa-inbox"></i></a>&nbsp;';
+            break;
+        case "LISTO":
+
+            html +=
+                '<a href="javascript:void(0);" onclick="estatusChange(' +
+                row.id +
+                "," +
+                "'FINALIZADO'"+
+            ')" class="btn btn-round btn-warning btn-icon btn-sm" rel="tooltip" data-toggle="tooltip" title="Entregado"><i class="fas fa-retweet"></i></a>&nbsp;';
+            break;
     }
-
-  function actualizarListaProductos() {
-    var listaProductos = $('#listaProductos');
-    listaProductos.empty();
-
-    var total = 0; // Variable para calcular el total de la compra
-
-    for (var producto in productos) {
-        console.log(productos);
-        var item = productos[producto];
-        var cantidad = item.cantidad;
-        var precioUnitario = item.precio;
-        var subtotal = cantidad * precioUnitario;
-        total += subtotal;
-
-        // Crear elementos <li> para mostrar los detalles del producto
-        var li = $('<li>').addClass('list-group-item').text(producto + ' (').append($('<span>').addClass('badge bg-primary rounded-pill text-white').text(cantidad)).append('), Precio: $' + precioUnitario.toFixed(2) + ', Total: $' + subtotal.toFixed(2));
-
-
-
-
-
-        // Agregar botones de incrementar, reducir y eliminar
-        //var btnMas = $('<button>').addClass('btn btn-primary').attr('data-producto', producto).text('+').prepend($('<i>').addClass('fas fa-plus'));
-
-        var btnMas = $('<button>').addClass('btn btn-primary').attr('data-producto', producto).addClass('incrementar-cantidad').prepend($('<i>').addClass('fas fa-plus'));
-        var btnMenos = $('<button>').addClass('btn btn-warning').attr('data-producto', producto).addClass('reducir-cantidad').prepend($('<i>').addClass('fas fa-minus'));
-        var btnEliminar = $('<button>').addClass('btn btn-danger').attr('data-producto', producto).addClass('eliminar-producto').prepend($('<i>').addClass('fas fa-trash'));
-
-        // Agregar los botones al elemento <li>
-        li.append(btnMenos).append(btnMas).append(btnEliminar);
-
-        // Agregar el elemento <li> a la lista de productos
-        listaProductos.append(li);
-    }
-
-    // Actualizar el campo de entrada oculto con los datos de los productos
-    $('#productosInput').val(JSON.stringify(productos));
-
-    // Actualizar el total de la compra
-    $('#totalCompra').text('Total de la compra: $' + total.toFixed(2));
-    $('#totalCompraInput').val(total.toFixed(2));
-    mostrarOcultarFormulario();
-    // Manejar eventos de los botones
-    $('.incrementar-cantidad').on('click', function (e) {
-        e.preventDefault();
-        var producto = $(this).data('producto');
-        productos[producto].cantidad++;
-        actualizarListaProductos();
-        actualizarTotalCompra();
-    });
-
-    $('.reducir-cantidad').on('click', function (e) {
-        e.preventDefault();
-        var producto = $(this).data('producto');
-        if (productos[producto].cantidad > 1) {
-            productos[producto].cantidad--;
-            actualizarListaProductos();
-            actualizarTotalCompra();
-        }
-    });
-
-    $('.eliminar-producto').on('click', function (e) {
-        e.preventDefault();
-        var producto = $(this).data('producto');
-        delete productos[producto];
-        actualizarListaProductos();
-        actualizarTotalCompra();
-    });
+    return html;
 }
 
+function detalles(iIDPedido) {
+    $.ajax({
+        url: routeData,
+        type: "post",
+        encoding: "UTF-8",
+        async: true,
+        cache: false,
+        data: {
+            iIDPedido: iIDPedido,
+        },
+        beforeSend: function () {
+            NProgress.start();
+            NProgress.set(0.4);
+            Swal.fire({
+                title: "Detalles",
+                text: "Buscando Datos del Pedido",
+                didOpen: () => {
+                    swal.showLoading();
+                },
+            });
+        },
+        success: function (data) {
+            console.log(data);
+            Swal.close();
+            NProgress.done();
 
-    function limpiarSeleccion() {
-        $('#searchProduct').val('').trigger('change.select2');
-    }
+            modalDetalles(data);
 
-    function actualizarTotalCompra() {
-        var total = 0;
-
-        for (var producto in productos) {
-            var item = productos[producto];
-            var cantidad = item.cantidad;
-            var precioUnitario = item.precio;
-            var subtotal = cantidad * precioUnitario;
-            total += subtotal;
-            console.log(total)
-
-        }
-
-        // Update the total purchase amount in the HTML element
-        $('#totalCompra').text('Total de la compra: $' + total.toFixed(2));
-
-        // Update the value of the hidden input field with the total amount
-
-    }
-
-    function mostrarOcultarFormulario() {
-        var listaProductos = $('#listaProductos');
-        var compraForm = $('#compraForm');
-        if (listaProductos.children().length > 0) {
-            compraForm.removeClass('oculto');
-        } else {
-            compraForm.addClass('oculto');
-        }
-    }
-
-    $('form').on('submit', function () {
-        $('input[name="productos"]').val(JSON.stringify(productos));
+            //  modalMotivos(res,stringified)
+        },
+        error: function (err) {
+            Swal.close();
+            alert(err);
+            NProgress.done();
+            alert("Problemas con el procedimiento.");
+        },
     });
+}
+function modalDetalles(data) {
+    console.log(data);
+    $("#ModalPedidos").modal("show");
+    var lstProdu = data[0].lstprodu;
+    var total = data[0].total;
 
-});
+    var ul = document.getElementById("lista-productos");
+console.log( lstProdu)
+    lstProdu.forEach(function (producto) {
+        var li = document.createElement("li"); // Crear elemento <li>
+        console.log(li)
+        li.textContent =
+            producto.producto + " - Cantidad: " + producto.cantidad;
+        ul.appendChild(li); // Agregar <li> al <ul>
+        var totalSpan = document.getElementById("total-span");
+        console.log(totalSpan)
+        totalSpan.textContent = "Total $" + total;
+    });
+}
+function estatusChange(iIDPedido, cEstatus) {
+    $.ajax({
+        url: routeEstatus,
+        type: "post",
+        encoding: "UTF-8",
+        async: true,
+        cache: false,
+        data: {
+            iIDPedido: iIDPedido,
+            cEstatus: cEstatus,
+        },
+        beforeSend: function () {
+            NProgress.start();
+            NProgress.set(0.4);
+            Swal.fire({
+                title: "Aviso",
+                text: "Validando Cambios",
+                didOpen: () => {
+                    swal.showLoading();
+                },
+            });
+        },
+        success: function (data) {
+            console.log(data);
+            Swal.close();
+            NProgress.done();
+            if (data.lSuccess == true) {
+                swal.fire({
+                    icon: "success",
+                    title: "Éxito",
+                    text: "Estatus actualizado correctamente",
+                    confirmButtonText: "Aceptar",
+                });
+                $gridExpediente.bootstrapTable('removeAll');
+                $gridExpediente.bootstrapTable('refresh');
+            } else {
+                swal.fire({
+                    icon: "error",
+                    title: "Ups...",
+                    text: "No se pudo cambiar el error",
+                    confirmButtonText: "Aceptar",
+                });
+            }
+
+            //  modalMotivos(res,stringified)
+        },
+        error: function (err) {
+            Swal.close();
+            alert(err);
+            NProgress.done();
+            alert("Problemas con el procedimiento.");
+        },
+    });
+}
+function estatusChangeCan(iIDPedido, cEstatus) {
+    Swal.fire({
+      title: "Detalles",
+      text: "Ingrese el motivo de la Cancelacion:",
+      input: 'textarea',
+      inputLabel: 'Motivo',
+      inputPlaceholder: 'Ingrese el motivo aquí...',
+      inputAttributes: {
+        'aria-label': 'Motivo'
+      },
+      showCancelButton: true,
+      preConfirm: function (motivo) {
+        if (!motivo) {
+          Swal.showValidationMessage('Debe ingresar un motivo');
+        } else {
+          enviarSolicitudAjax(iIDPedido, cEstatus, motivo);
+        }
+      }
+    });
+  }
+
+  function enviarSolicitudAjax(iIDPedido, cEstatus, motivo) {
+    $.ajax({
+      url: routeCan,
+      type: "post",
+      encoding: "UTF-8",
+      async: true,
+      cache: false,
+      data: {
+        iIDPedido: iIDPedido,
+        cEstatus: cEstatus,
+        motivo: motivo // Agregar el motivo al objeto data
+      },
+      beforeSend: function () {
+        NProgress.start();
+        NProgress.set(0.4);
+        Swal.fire({
+          title: "Aviso",
+          text: "Validando Cambios",
+          didOpen: () => {
+            swal.showLoading();
+        },
+        });
+      },
+      success: function (data) {
+        console.log(data);
+        Swal.close();
+        NProgress.done();
+        if (data.lSuccess == true) {
+          swal.fire({
+            icon: "success",
+            title: "Éxito",
+            text: "Estatus actualizado correctamente",
+            confirmButtonText: "Aceptar",
+          });
+          $gridExpediente.bootstrapTable('removeAll');
+          $gridExpediente.bootstrapTable('refresh');
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Ups...",
+            text: "No se pudo cambiar el error",
+            confirmButtonText: "Aceptar",
+          });
+        }
+      },
+      error: function (err) {
+        Swal.close();
+        alert(err);
+        NProgress.done();
+        alert("Problemas con el procedimiento.");
+      },
+    });
+  }
+
+  function MotivoCanc(iIDPedido, cSistema) {
+    $.ajax({
+      url: routeMotCan,
+      type: "post",
+      encoding: "UTF-8",
+      async: true,
+      cache: false,
+      data: {
+        iIDPedido: iIDPedido,
+        cSistema: cSistema,
+
+      },
+      beforeSend: function () {
+        NProgress.start();
+        NProgress.set(0.4);
+        Swal.fire({
+          title: "Aviso",
+          text: "Buscando Informacion",
+          didOpen: () => {
+            swal.showLoading();
+        },
+        });
+      },
+      success: function (data) {
+        console.log(data);
+        Swal.close();
+        NProgress.done();
+        if (data.lSuccess == true) {
+          swal.fire({
+            icon: "success",
+            title: "Motivo",
+            text: data.cMensaje,
+            confirmButtonText: "Aceptar",
+          });
+
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Ups...",
+            text: "No se encontro la informacion",
+            confirmButtonText: "Aceptar",
+          });
+        }
+      },
+      error: function (err) {
+        Swal.close();
+        alert(err);
+        NProgress.done();
+        alert("Problemas con el procedimiento.");
+      },
+    });
+  }

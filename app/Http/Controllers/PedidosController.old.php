@@ -2,34 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pedidos;
 use App\Models\Product;
+use App\Models\Product_Pedido;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class OrdenController extends Controller
+class PedidosControllesssr extends Controller
 {
     public function index()
     {
-        $productos = Product::where('estatus', 'Disponible')
+
+        $product = Product::where('estatus', 'Disponible')
             ->where(function ($query) {
-                $query->where('inventario', true)
-                    ->where('cantidad_producto', '>', 0);
+                $query->where('inventario', true)->where('cantidad_producto', '>', 0);
             })
             ->orWhere('inventario', false)
             ->get();
 
-        return view('orden.index', compact('productos'));
+        return view('pedidos.index', compact('product'));
     }
-
-    public function getProducto(Request $request)
+    public function getData(Request $request)
     {
-        return Product::where('estatus', 'Disponible')
+        $product = Product::where('estatus', 'Disponible')
             ->where('nombre_producto', $request->producto)
             ->where(function ($query) {
-                $query->where('inventario', true)
-                    ->where('cantidad_producto', '>', 0);
+                $query->where('inventario', true)->where('cantidad_producto', '>', 0);
             })
             ->orWhere('inventario', false)
+            ->select(
+                'id',
+                'codigo_barras as bar_code',
+                'nombre_producto as name',
+                'precio_venta as sales_price'
+            )
             ->get();
+
+        return $product;
     }
 
     public function realizacion(Request $request)
