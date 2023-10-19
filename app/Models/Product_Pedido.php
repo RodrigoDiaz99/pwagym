@@ -18,4 +18,9 @@ class Product_Pedido extends Model
         'pedidos_id',
         'lActivo'
     ];
+
+    public function productos()
+    {
+        return $this->hasMany('productos');
+    }
 }

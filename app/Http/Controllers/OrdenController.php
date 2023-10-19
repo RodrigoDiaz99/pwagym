@@ -41,7 +41,6 @@ class OrdenController extends Controller
     {
         try {
             DB::beginTransaction();
-
             $productos = $request->productos;
             $totalCompra = $request->total_venta;
 
@@ -59,6 +58,7 @@ class OrdenController extends Controller
                 'precio' => $totalCompra,
                 'users_id' => $usuario->id,
             ]);
+
             $numero_orden = '000' . $pedido->id;
             $linea_referencia = $pedido->id .  mt_rand(1, 990) . "COM";
 
@@ -69,6 +69,7 @@ class OrdenController extends Controller
 
             // Obtener los datos de cada producto
             foreach ($productos as $producto) {
+
                 Product_Pedido::create([
                     'cantidad' => $producto['unidades'],
                     'productos_id' => $producto['id'],
@@ -76,7 +77,6 @@ class OrdenController extends Controller
                     'lActivo' => true
                 ]);
             }
-
             DB::commit();
             return response()->json([
                 'lSuccess' => true,
@@ -87,6 +87,7 @@ class OrdenController extends Controller
 
             return response()->json([
                 'lSuccess' => false,
+                'iLine' => $ex->getLine(),
                 'cMensaje' => $ex->getMessage(),
             ]);
         }
