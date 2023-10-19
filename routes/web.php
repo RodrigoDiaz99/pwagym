@@ -16,8 +16,8 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::prefix('pedidos')->name('pedidos.')->controller(PedidosController::class)->group(function () {
     Route::get('/', 'index')->name('index');
-    Route::post('getPedidos', 'getPedidos')->name('getPedidos');
-    Route::post('getDetalles', 'getDetalles')->name('getDetalles');
+    Route::get('getPedidos', 'getPedidos')->name('getPedidos');
+    Route::post('cambiarEstatus', 'cambiarEstatus')->name('cambiarEstatus');
     Route::post('updateEstatus', 'updateEstatus')->name('updateEstatus');
 });
 
