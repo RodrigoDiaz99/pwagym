@@ -5,43 +5,35 @@
         .oculto {
             display: none;
         }
+
+        .row {
+            margin-bottom: .5rem;
+        }
     </style>
+
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Pedidos</h1>
-
     </div>
-    <div class="card px-2 mt-4 py-4">
-        <div class="row gx-2 gy-4">
 
-            <div class="container-fluid py-4">
+    <div class="card">
+        <div class="card-body">
 
-                <div class="row">
-
-                    <div class="col-12">
-                        <div class="card mb-4">
-                            <div class="card-body px-0 pt-0 pb-2">
-                                <div class="table-responsive">
-
-                                    <table id="table_ordenes" class="table align-items-center mb-0  table-responsive">
-                                    </table>
-
-                                </div>
-
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-
-                            </div>
-
-                        </div>
-                    </div>
-
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="gridPedidos" class="table align-items-center mb-0 ">
+                    </table>
                 </div>
             </div>
+
         </div>
     </div>
     @include('pedidos.modals.modalDetalles')
+    @include('pedidos.modals.modalCancelarPedido')
 @endsection
 @section('scripts')
     <script src="{{ asset('js/pedidos.js') }}"></script>
-    <script></script>
+    <script>
+        let routeGetPedidos = "{{ route('pedidos.getPedidos') }}"
+        let routeCambiarEstatus = "{{ route('pedidos.cambiarEstatus') }}"
+    </script>
 @endsection

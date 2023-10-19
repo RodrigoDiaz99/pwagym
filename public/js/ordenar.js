@@ -86,14 +86,16 @@ function sumarProducto(id) {
     let producto = productosTable.bootstrapTable('getRowByUniqueId', id);
 
     let unidades = producto.unidades + 1;
-    let total_venta = producto.precio_venta * unidades;
-    productosTable.bootstrapTable('updateByUniqueId', {
-        id: id,
-        row: {
-            unidades: unidades,
-            total_venta: total_venta
-        }
-    })
+    if (unidades <= producto.cantidad_producto) {
+        let total_venta = producto.precio_venta * unidades;
+        productosTable.bootstrapTable('updateByUniqueId', {
+            id: id,
+            row: {
+                unidades: unidades,
+                total_venta: total_venta
+            }
+        })
+    }
 }
 
 function restarProducto(id) {
