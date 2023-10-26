@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-    return view('auth.login');
+    return redirect(route('orden.index'));
 });
 
 Auth::routes();
@@ -19,9 +19,16 @@ Route::prefix('pedidos')->name('pedidos.')->controller(PedidosController::class)
     Route::get('getPedidos', 'getPedidos')->name('getPedidos');
     Route::post('cambiarEstatus', 'cambiarEstatus')->name('cambiarEstatus');
     Route::post('updateEstatus', 'updateEstatus')->name('updateEstatus');
+    Route::post('getDetallesPedido', 'getDetallesPedido')->name('getDetallesPedido');
 });
 
 Route::prefix('orden')->name('orden.')->controller(OrdenController::class)->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::post('getProducto', 'getProducto')->name('getProducto');
+    Route::post('enviarOrden', 'enviarOrden')->name('enviarOrden');
+});
+
+Route::prefix('comanda')->name('orden.')->controller(OrdenController::class)->group(function () {
     Route::get('/', 'index')->name('index');
     Route::post('getProducto', 'getProducto')->name('getProducto');
     Route::post('enviarOrden', 'enviarOrden')->name('enviarOrden');

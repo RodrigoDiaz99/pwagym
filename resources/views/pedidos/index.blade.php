@@ -27,7 +27,7 @@
 
         </div>
     </div>
-    @include('pedidos.modals.modalDetalles')
+    @include('pedidos.modals.modalDetallesPedido')
     @include('pedidos.modals.modalCancelarPedido')
 @endsection
 @section('scripts')
@@ -35,5 +35,6 @@
     <script>
         let routeGetPedidos = "{{ route('pedidos.getPedidos') }}"
         let routeCambiarEstatus = "{{ route('pedidos.cambiarEstatus') }}"
+        let routeGetDetallesPedido = "{{ route('pedidos.getDetallesPedido') }}"
     </script>
 @endsection

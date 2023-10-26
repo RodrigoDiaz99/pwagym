@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pedidos;
-use App\Models\Product;
-use App\Models\Product_Pedido;
+use App\Models\Productos;
+use App\Models\Productos_Pedidos;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,9 +19,9 @@ class PedidosController extends Controller
     public function getPedidos()
     {
         try {
-            return Pedidos::where('estatus', '!=', "CANCELADO")->get();
+             return Pedidos::with('users')->where('estatus', '!=', "CANCELADO")->get();
         } catch (Exception $ex) {
-            return null;
+            return $ex->getMessage();
         }
     }
 
@@ -35,9 +35,9 @@ class PedidosController extends Controller
             switch ($estatus) {
                 case "ACEPTADO":
                     // Obtener los productos del pedido.
-                    $productos_pedido = Product_Pedido::where('pedidos_id', $id)->get();
+                    $productos_pedido = Productos_Pedidos::where('pedidos_id', $id)->get();
                     foreach ($productos_pedido as $producto_pedido) {
-                        $producto = Product::where('id', $producto_pedido->productos_id)->where('inventario', '1')->first();
+                        $producto = Productos::where('id', $producto_pedido->productos_id)->where('inventario', '1')->first();
                         $producto->cantidad_producto -= $producto_pedido->cantidad;
                         $producto->save();
                     }
@@ -59,6 +59,20 @@ class PedidosController extends Controller
             ]);
         } catch (Exception $ex) {
             DB::rollback();
+            return response()->json([
+                'lSuccess' => false,
+                'cMensaje' => $ex->getMessage(),
+                'cTrace' => $ex->getTrace()
+            ]);
+        }
+    }
+
+    public function getDetallesPedido(Request $request)
+    {
+        try {
+            $productos_pedido = Pedidos::where('id', $request->pedidos_id)->first();
+            return $productos_pedido->productos;
+        } catch (Exception $ex) {
             return response()->json([
                 'lSuccess' => false,
                 'cMensaje' => $ex->getMessage(),

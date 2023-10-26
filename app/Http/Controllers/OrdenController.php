@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pedidos;
-use App\Models\Product;
-use App\Models\Product_Pedido;
+use App\Models\Productos;
+use App\Models\Productos_Pedidos;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class OrdenController extends Controller
 {
     public function index()
     {
-        $productos = Product::where('estatus', 'Disponible')
+        $productos = Productos::where('estatus', 'Disponible')
             ->where(function ($query) {
                 $query->where('inventario', true)
                     ->where('cantidad_producto', '>', 0);
@@ -27,7 +27,7 @@ class OrdenController extends Controller
 
     public function getProducto(Request $request)
     {
-        return Product::where('estatus', 'Disponible')
+        return Productos::where('estatus', 'Disponible')
             ->where('nombre_producto', $request->producto)
             ->where(function ($query) {
                 $query->where('inventario', true)
@@ -70,7 +70,7 @@ class OrdenController extends Controller
             // Obtener los datos de cada producto
             foreach ($productos as $producto) {
 
-                Product_Pedido::create([
+                Productos_Pedidos::create([
                     'cantidad' => $producto['unidades'],
                     'productos_id' => $producto['id'],
                     'pedidos_id' => $pedido->id,

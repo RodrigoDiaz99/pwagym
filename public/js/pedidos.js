@@ -1,5 +1,5 @@
 
-
+let pedidos_id = null;
 const pedidosTable = $('#gridPedidos');
 $(function ($) {
     $.ajaxSetup({
@@ -9,6 +9,11 @@ $(function ($) {
     pedidosTable.bootstrapTable({
         url: routeGetPedidos,
         uniqueId: 'id',
+        detailView: true,
+        icons: {
+            detailOpen: "fa fa-plus-circle",
+            detailClose: "fa fa-minus-circle",
+        },
         showFooter: true,
         columns: [
             {
@@ -29,6 +34,12 @@ $(function ($) {
 
             },
             {
+                title: "Encargado",
+                formatter: function (value, row) {
+                    return `${row.users.nombre} ${row.users.apellido_paterno} ${row.users.apellido_materno}`;
+                }
+            },
+            {
                 field: 'linea_referencia',
                 title: 'Línea de referencia',
             },
@@ -46,10 +57,14 @@ $(function ($) {
 
             {
                 title: 'Acciones',
-
                 formatter: AccionesFormatter,
-            }]
+            }],
+        onExpandRow: function (index, row, $detail) {
+            let tableHTML = "<table class='table' cellspacing='0'></table>";
+            gridDetallesPedido(row, $detail.html(tableHTML).find("table"));
+        },
     })
+
 
 });
 
@@ -116,6 +131,45 @@ function cancelarPedido(id) {
     $("#modalCancelarPedido").modal("show");
 }
 
+function gridDetallesPedido(row, gridDetallesPedido) {
+    gridDetallesPedido.bootstrapTable({
+        url: routeGetDetallesPedido,
+        contentType: "application/x-www-form-urlencoded",
+        method: "POST",
+        queryParams: function (p) {
+            return {
+                pedidos_id: row.id,
+            };
+        },
+        columns: [
+            {
+                id: 'id',
+                visible: false
+            },
+            {
+                title: "Producto",
+                field: 'nombre_producto'
+            },
+            {
+                title: 'Cantidad',
+                field: 'pivot.cantidad',
+            },
+            {
+                title: 'Precio unitario',
+                formatter: function (value, row) {
+                    return `$${row.precio_venta}`;
+                },
+            },
+            {
+                title: 'Subtotal',
+                formatter: function (value, row) {
+                    let Subtotal = row.precio_venta * row.pivot.cantidad;
+                    return `$${Subtotal}`;
+                },
+            },
+        ]
+    })
+}
 //#endregion
 
 //#region onEvent
@@ -135,11 +189,6 @@ function PrecioFormatter(value, row) {
 
 function AccionesFormatter(value, row) {
     let html = "";
-    console.log(row.estatus);
-    html +=
-        '<a href="javascript:void(0);" onclick="detalles(' +
-        row.id +
-        ')" class="btn btn-round btn-primary" rel="tooltip" data-toggle="tooltip" title="Modificar Archivos"><i class="fas fa-info-circle"></i></a>&nbsp;';
     switch (row.estatus) {
 
         case "ENVIADO":

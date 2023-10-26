@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventory;
-use App\Models\Product;
+use App\Models\Productos;
 
 class ProductosController extends Controller
 {
@@ -16,7 +16,7 @@ class ProductosController extends Controller
 
 
 
-        $products = Product::where('estatus', 'Disponible')
+        $products = Productos::where('estatus', 'Disponible')
         ->where(function ($query) {
             $query->where('inventario', true)->where('cantidad_producto', '>', 0);
         })
