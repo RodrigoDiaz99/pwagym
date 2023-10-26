@@ -37,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('comanda')->name('comanda.')->controller(ComandaController::class)->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::post('getComanda', 'getComanda')->name('getComanda');
+        Route::get('gridPedidosComanda', 'gridPedidosComanda')->name('gridPedidosComanda');
+        Route::post('getDetallesPedido', 'getDetallesPedido')->name('getDetallesPedido');
     });
 });

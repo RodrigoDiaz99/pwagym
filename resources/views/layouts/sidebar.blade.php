@@ -45,8 +45,8 @@
      </li>
 
      <li class="nav-item">
-         <a class="nav-link">
-             <i class="fa fa-list"></i>
+        <a class="nav-link" href="{{ route('comanda.index') }}">
+            <i class="fa fa-list"></i>
              <span>Comanda</span></a>
      </li>
 
