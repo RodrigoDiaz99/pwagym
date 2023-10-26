@@ -2,11 +2,12 @@
  <ul id="accordionSidebar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion">
 
      <!-- Sidebar - Brand -->
-     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="">
-         <div class="sidebar-brand-icon rotate-n-15">
-             <i class="fa fa-female"></i>
+     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+         <div class="row">
+             <div class="col-md-12 px-5">
+                 <img src="{{ asset('images/spacio.png') }}" alt="" class="img-fluid">
+             </div>
          </div>
-         <div class="sidebar-brand-text mx-3">SpacioFems</div>
      </a>
 
      <!-- Divider -->
@@ -31,14 +32,14 @@
 
      <!-- Nav Item - Tables -->
      <li class="nav-item">
-         <a class="nav-link" href="{{route('orden.index')}}">
+         <a class="nav-link" href="{{ route('orden.index') }}">
              <i class="fa fa-th-large"></i>
              <span>Ordenar</span></a>
      </li>
 
      <!-- Nav Item - Tables -->
      <li class="nav-item">
-         <a class="nav-link" href="{{route('pedidos.index')}}">
+         <a class="nav-link" href="{{ route('pedidos.index') }}">
              <i class="fa fa-list"></i>
              <span>Pedidos</span></a>
      </li>

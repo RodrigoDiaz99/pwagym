@@ -119,7 +119,6 @@ function cambiarEstatus(id, estatus) {
                 icon: "error",
                 confirmButtonText: "Aceptar",
             });
-            alert(err);
         },
     });
 }
@@ -174,7 +173,7 @@ function gridDetallesPedido(row, gridDetallesPedido) {
 
 //#region onEvent
 $("#btnCancelarPedido").on("click", function () {
-
+    cambiarEstatus($("#pedidos_id").val(), "CANCELADO")
 })
 
 //#endregion

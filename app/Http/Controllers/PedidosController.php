@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BitacoraCancelaciones;
 use App\Models\Pedidos;
 use App\Models\Productos;
 use App\Models\Productos_Pedidos;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PedidosController extends Controller
@@ -19,7 +21,7 @@ class PedidosController extends Controller
     public function getPedidos()
     {
         try {
-             return Pedidos::with('users')->where('estatus', '!=', "CANCELADO")->get();
+            return Pedidos::with('users')->where('estatus', '!=', "CANCELADO")->get();
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
@@ -32,6 +34,7 @@ class PedidosController extends Controller
             $id = $request->id;
             $estatus = $request->estatus;
             $pedido = Pedidos::where('id', $id)->first();
+            $motivoCancelacion = $request->motivoCancelacion;
             switch ($estatus) {
                 case "ACEPTADO":
                     // Obtener los productos del pedido.
@@ -45,17 +48,23 @@ class PedidosController extends Controller
                     $pedido->save();
                     break;
                 case "CANCELADO":
+                    $pedido->estatus = $estatus;
+                    $pedido->save();
+                    $bitacoraCancelacion = new BitacoraCancelaciones();
+                    $bitacoraCancelacion->pedidos_id = $pedido->id;
+                    $bitacoraCancelacion->users_id = Auth::user()->id;
+                    $bitacoraCancelacion->motivo = $motivoCancelacion;
+                    $bitacoraCancelacion->save();
                     break;
                 default:
                     $pedido->estatus = $estatus;
                     $pedido->save();
                     break;
             }
-            throw new Exception("Llegó al final");
             DB::commit();
             return response()->json([
                 'lSuccess' => true,
-                'cMensaje' => '¡Correcto!',
+                'cMensaje' => '¡Se aplicaron los cambios correctamente!',
             ]);
         } catch (Exception $ex) {
             DB::rollback();
