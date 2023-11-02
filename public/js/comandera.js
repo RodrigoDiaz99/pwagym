@@ -203,6 +203,71 @@ function enviarOrden() {
             }
         })
 }
+
+function agregarProductosAOrden() {
+    let pedidos_id = $("#pedidos_id").val();
+    let comentarios = $("#cComentarios").val();
+    let productos = productosTable.bootstrapTable('getData');
+    if (productos.length <= 0) {
+        $("#err_productosTable").show();
+        return false;
+    }
+
+    if (productosTable.bootstrapTable('getData'))
+
+
+        $.ajax({
+            url: routeAgregarProductosAOrden,
+            type: "post",
+            dataType: "json",
+            encoding: "UTF-8",
+            data: {
+                productos: productos,
+                total_venta: $("#totalVenta").val(),
+                pedidos_id: pedidos_id,
+                comentarios: comentarios
+            },
+            beforeSend: function () {
+                Swal.fire({
+                    title: 'Enviando',
+                    text: 'Enviando orden, espere un momento...',
+                });
+                Swal.showLoading();
+            },
+            success: function (data) {
+                Swal.close();
+                if (data.lSuccess) {
+                    Swal.fire({
+                        title: "Correcto",
+                        text: "Se aplicaron los cambios correctamente",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "/pedidos";
+                        }
+                    });
+
+
+                } else {
+                    Swal.fire({
+                        title: "Error",
+                        text: data.cMensaje,
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    title: "Error",
+                    text: "Ocurrió un error desconocido.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                });
+            }
+        })
+}
 //#endregion
 
 //#region onEvent

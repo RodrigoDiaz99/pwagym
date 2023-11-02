@@ -102,4 +102,59 @@ class ComanderaController extends Controller
             ]);
         }
     }
+
+    public function agregarProductos($id)
+    {
+        $productos = Productos::where('estatus', 'Disponible')
+            ->where(function ($query) {
+                $query->where('inventario', true)
+                    ->where('cantidad_producto', '>', 0);
+            })
+            ->orWhere('inventario', false)
+            ->get();
+        $pedido = Pedidos::where('id', $id)->first();
+        return view('comandera.agregarProductos', compact('productos', 'pedido'));
+    }
+
+    public function agregarProductosAOrden(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $productos = $request->productos;
+            $totalCompra = $request->total_venta;
+            $comentario = $request->comentarios;
+
+            $pedido = Pedidos::where('id', $request->pedidos_id)->first();
+            if (strlen($pedido->comentarios) > 0) {
+                $pedido->comentarios .= " | " . $comentario;
+            } else {
+                $pedido->comentarios = $comentario;
+            }
+            $pedido->precio += $totalCompra;
+            $pedido->save();
+
+            // Obtener los datos de cada producto
+            foreach ($productos as $producto) {
+                Productos_Pedidos::create([
+                    'cantidad' => $producto['unidades'],
+                    'productos_id' => $producto['id'],
+                    'pedidos_id' => $pedido->id,
+                    'lActivo' => true
+                ]);
+            }
+            DB::commit();
+            return response()->json([
+                'lSuccess' => true,
+                'cMensaje' => "Se agregaron los productos de manera exitosa.",
+            ]);
+        } catch (Exception $ex) {
+            DB::rollBack();
+
+            return response()->json([
+                'lSuccess' => false,
+                'iLine' => $ex->getLine(),
+                'cMensaje' => $ex->getMessage(),
+            ]);
+        }
+    }
 }

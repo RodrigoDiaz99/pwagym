@@ -33,20 +33,25 @@ $(function ($) {
                 field: "numero_orden"
 
             },
-            {
-                title: "Encargado",
-                formatter: function (value, row) {
-                    return `${row.users.nombre} ${row.users.apellido_paterno} ${row.users.apellido_materno}`;
-                }
-            },
+
             {
                 field: 'linea_referencia',
                 title: 'Línea de referencia',
             },
+
+            {
+                field: 'created_at',
+                title: 'Fecha y hora',
+                width: 25,
+                widthUnit: "%",
+                formatter: function (value, row) {
+                    return moment(row.created_at).format("DD/MM/YYYY h:mm:ssa");
+                }
+            },
             {
                 field: 'estatus',
                 title: 'Estado',
-                width: 35,
+                width: 25,
                 widthUnit: "%",
             },
             {
@@ -60,11 +65,22 @@ $(function ($) {
                 formatter: AccionesFormatter,
             }],
         onExpandRow: function (index, row, $detail) {
-            let tableHTML = "<table class='table' cellspacing='0'></table>";
-            gridDetallesPedido(row, $detail.html(tableHTML).find("table"));
+            let detallesHTML = "<table class='table  detalles' cellspacing='0'></table>";
+            let productosHTML = "<table class='table  productos' cellspacing='0'></table>";
+
+            let combinedHTML = detallesHTML + productosHTML;
+
+            $detail.html(combinedHTML);
+
+            let detallesTable = $detail.find(".detalles");
+            let productosTable = $detail.find(".productos");
+
+            // Now you can work with 'detallesTable' and 'productosTable' as needed
+            gridDetallesPedido(row, detallesTable, productosTable);
+
+
         },
     })
-
 
 });
 
@@ -101,7 +117,7 @@ function cambiarEstatus(id, estatus) {
                     text: "Estatus actualizado correctamente",
                     confirmButtonText: "Aceptar",
                 });
-                pedidosTable.bootstrapTable('refresh');
+                pedidosTable.bootstrapTable('refresh', { silent: true });
             } else {
                 Swal.fire({
                     title: "Error",
@@ -130,10 +146,34 @@ function cancelarPedido(id) {
     $("#modalCancelarPedido").modal("show");
 }
 
-function gridDetallesPedido(row, gridDetallesPedido) {
+function gridDetallesPedido(row, gridDetallesPedido, gridProductosPedido) {
     gridDetallesPedido.bootstrapTable({
+        theadClasses: "thead-dark",
+        columns: [
+            {
+                field: "encargado",
+                title: "Encargado",
+
+            },
+            {
+                field: 'comentarios',
+                title: 'Comentarios',
+            },
+        ]
+    });
+
+    gridDetallesPedido.bootstrapTable('append', ([
+        {
+            encargado: `${row.users.nombre} ${row.users.apellido_paterno} ${row.users.apellido_materno}`,
+            comentarios: row.comentarios,
+
+        }
+    ]))
+
+    gridProductosPedido.bootstrapTable({
         url: routeGetDetallesPedido,
         contentType: "application/x-www-form-urlencoded",
+        theadClasses: "thead-dark",
         method: "POST",
         queryParams: function (p) {
             return {
@@ -168,12 +208,23 @@ function gridDetallesPedido(row, gridDetallesPedido) {
             },
         ]
     })
+
+
 }
+
+
 //#endregion
 
 //#region onEvent
 $("#btnCancelarPedido").on("click", function () {
     cambiarEstatus($("#pedidos_id").val(), "CANCELADO")
+})
+
+$("#btnActualizarPedidos").on("click", function () {
+    $("#gridPedidos").bootstrapTable("refresh");
+    $("#gridPedidos").bootstrapTable("removeAll");
+    $(".productos").bootstrapTable("refresh");
+
 })
 
 //#endregion
@@ -188,9 +239,14 @@ function PrecioFormatter(value, row) {
 
 function AccionesFormatter(value, row) {
     let html = "";
+
     switch (row.estatus) {
 
         case "ENVIADO":
+            html +=
+                '<a href="/comandera/agregarProductos/' + row.id + '" onclick="agregarProductos(' +
+                row.id +
+                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Agregar productos"><i class="fas fa-plus"></i></a>&nbsp;';
             html +=
                 '<a href="javascript:void(0);" onclick="cambiarEstatus(' +
                 row.id +
@@ -202,22 +258,34 @@ function AccionesFormatter(value, row) {
                 row.id + ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i></a>&nbsp;';
             break;
         case "ACEPTADO":
-            console.log("entro")
+            html +=
+                '<a href="/comandera/agregarProductos/' + row.id + '" onclick="agregarProductos(' +
+                row.id +
+                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Agregar productos"><i class="fas fa-plus"></i></a>&nbsp;';
             html +=
                 '<a href="javascript:void(0);" onclick="cambiarEstatus(' +
                 row.id +
                 "," +
                 "'PREPARACIÓN'" +
                 ')" class="btn btn-round btn-warning" rel="tooltip" data-toggle="tooltip" title="Elaboracion"><i class="fas fa-retweet"></i></a>&nbsp;';
-            console.log(html)
+            html +=
+                '<a href="javascript:void(0);" onclick="cancelarPedido(' +
+                row.id + ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i></a>&nbsp;';
             break;
         case "PREPARACIÓN":
+            html +=
+                '<a href="/comandera/agregarProductos/' + row.id + '" onclick="agregarProductos(' +
+                row.id +
+                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Agregar productos"><i class="fas fa-plus"></i></a>&nbsp;';
             html +=
                 '<a href="javascript:void(0);" onclick="cambiarEstatus(' +
                 row.id +
                 "," +
                 "'LISTO'" +
                 ')" class="btn btn-round btn-warning" rel="tooltip" data-toggle="tooltip" title="Listo"><i class="fas fa-retweet"></i></a>&nbsp;';
+            html +=
+                '<a href="javascript:void(0);" onclick="cancelarPedido(' +
+                row.id + ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i></a>&nbsp;';
             break;
 
         case "LISTO":

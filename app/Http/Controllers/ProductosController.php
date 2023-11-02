@@ -11,19 +11,20 @@ class ProductosController extends Controller
     {
         return view('productos.index');
     }
-    public function productList()
+
+    public function gridProductos()
     {
-
-
-
         $products = Productos::where('estatus', 'Disponible')
-        ->where(function ($query) {
-            $query->where('inventario', true)->where('cantidad_producto', '>', 0);
-        })
-        ->orWhere('inventario', false)
-        ->get();
+            ->where(function ($query) {
+                $query->where(function ($subquery) {
+                    $subquery->where('inventario', true)
+                        ->where('cantidad_producto', '>', 0);
+                })
+                    ->orWhere('inventario', false);
+            })
+            ->get();
 
 
-return $products;
+        return $products;
     }
 }

@@ -1,107 +1,54 @@
 
-const comandaTable = $('#gridPedidosComanda');
+let pedidos_id = null;
+const gridProductos = $('#gridProductos');
 $(function ($) {
     $.ajaxSetup({
         headers: { "X-CSRF-Token": $("meta[name=csrf-token]").attr("content") },
     });
 
-    comandaTable.bootstrapTable({
-        url: routeGridPedidosComanda,
+    gridProductos.bootstrapTable({
+        url: routeGridProductos,
         uniqueId: 'id',
         detailView: true,
-        icons: {
-            detailOpen: "fa fa-plus-circle",
-            detailClose: "fa fa-minus-circle",
-        },
-        showFooter: true,
         columns: [
-            {
-                field: 'inventario',
-                visible: false
-            },
-            {
-                field: 'cantidad_producto',
-                visible: false
-            },
+
             {
                 id: 'id',
-                visible: false
+                title: "ID",
+                field: "id"
             },
             {
-                title: "No. Orden",
-                field: "numero_orden"
+                title: "Nombre",
+                field: "nombre_producto"
 
             },
-
             {
-                field: 'linea_referencia',
-                title: 'Línea de referencia',
+                field: 'codigo_barras',
+                title: "Código",
             },
             {
-                field: 'estatus',
-                title: 'Estado',
-                width: 35,
-                widthUnit: "%",
+                field: 'inventario',
+                title: '¿Es inventario?',
+                formatter: function (value, row) {
+                    if (row.inventario == 1) {
+                        return "Sí";
+                    } else {
+                        return "No";
+                    }
+                }
             },
             {
-                field: 'precio',
-                title: 'Total',
-                formatter: PrecioFormatter
+                field: 'precio_venta',
+                title: 'Precio de venta',
+                formatter: 'PrecioFormatter'
             },
-
-            {
-                title: 'Acciones',
-                formatter: AccionesFormatter,
-            }],
-        onExpandRow: function (index, row, $detail) {
-            let tableHTML = "<table class='table' cellspacing='0'></table>";
-            gridDetallesPedido(row, $detail.html(tableHTML).find("table"));
-        },
+        ],
     })
 
 
 });
 
 //#region funciones
-function gridDetallesPedido(row, gridDetallesPedido) {
-    gridDetallesPedido.bootstrapTable({
-        url: routeGetDetallesPedido,
-        contentType: "application/x-www-form-urlencoded",
-        method: "POST",
-        queryParams: function (p) {
-            return {
-                pedidos_id: row.id,
-            };
-        },
-        columns: [
-            {
-                id: 'id',
-                visible: false
-            },
-            {
-                title: "Producto",
-                field: 'nombre_producto'
-            },
-            {
-                title: 'Cantidad',
-                field: 'pivot.cantidad',
-            },
-            {
-                title: 'Precio unitario',
-                formatter: function (value, row) {
-                    return `$${row.precio_venta}`;
-                },
-            },
-            {
-                title: 'Subtotal',
-                formatter: function (value, row) {
-                    let Subtotal = row.precio_venta * row.pivot.cantidad;
-                    return `$${Subtotal}`;
-                },
-            },
-        ]
-    })
-}
 //#endregion
 
 //#region onEvent
@@ -114,6 +61,7 @@ function gridDetallesPedido(row, gridDetallesPedido) {
 function PrecioFormatter(value, row) {
     return '$' + value;
 }
+
 
 function AccionesFormatter(value, row) {
     let html = "";

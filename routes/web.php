@@ -1,15 +1,17 @@
 <?php
 
 use App\Http\Controllers\ComandaController;
-use App\Http\Controllers\OrdenController;
+use App\Http\Controllers\ComanderaController;
+use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\PedidosController;
+use App\Http\Controllers\ProductosController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
     if (Auth::check()) {
-        return redirect(route('orden.index'));
+        return redirect(route('comandera.index'));
     } else {
         return view('auth.login');
     }
@@ -29,15 +31,21 @@ Route::middleware(['auth'])->group(function () {
         Route::post('getDetallesPedido', 'getDetallesPedido')->name('getDetallesPedido');
     });
 
-    Route::prefix('orden')->name('orden.')->controller(OrdenController::class)->group(function () {
+    Route::prefix('comandera')->name('comandera.')->controller(ComanderaController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('getProducto', 'getProducto')->name('getProducto');
         Route::post('enviarOrden', 'enviarOrden')->name('enviarOrden');
+        Route::get('/agregarProductos/{id}', 'agregarProductos')->name('agregarProductos');
+        Route::post('agregarProductosAOrden', 'agregarProductosAOrden')->name('agregarProductosAOrden');
     });
 
-    Route::prefix('comanda')->name('comanda.')->controller(ComandaController::class)->group(function () {
+    Route::prefix('configuracion')->name('configuracion.')->controller(ConfiguracionController::class)->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('gridPedidosComanda', 'gridPedidosComanda')->name('gridPedidosComanda');
-        Route::post('getDetallesPedido', 'getDetallesPedido')->name('getDetallesPedido');
+        Route::post('guardarConfiguracion', 'guardarConfiguracion')->name('guardarConfiguracion');
+    });
+
+    Route::prefix('productos')->name('productos.')->controller(ProductosController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('gridProductos', 'gridProductos')->name('gridProductos');
     });
 });

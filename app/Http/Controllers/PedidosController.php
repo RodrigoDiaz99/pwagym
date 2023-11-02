@@ -21,7 +21,7 @@ class PedidosController extends Controller
     public function getPedidos()
     {
         try {
-            return Pedidos::with('users')->where('estatus', '!=', "CANCELADO")->get();
+            return Pedidos::with('users')->where('estatus', '!=', "CANCELADO")->orderBy('id','desc')->get();
         } catch (Exception $ex) {
             return $ex->getMessage();
         }

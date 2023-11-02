@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Users extends Model
+class Roles extends Model
 {
     use HasFactory;
-    protected $table = "users";
+    protected $table = "roles";
 
-    public function rol()
+    public function users()
     {
-        return $this->hasOne(Roles::class, "id", "roles_id");
+        return $this->hasMany(Users::class, "users_id", "id");
     }
 }
