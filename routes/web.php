@@ -21,7 +21,7 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
 
 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     Route::prefix('pedidos')->name('pedidos.')->controller(PedidosController::class)->group(function () {
         Route::get('/', 'index')->name('index');
