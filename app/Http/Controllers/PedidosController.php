@@ -79,8 +79,12 @@ class PedidosController extends Controller
     public function getDetallesPedido(Request $request)
     {
         try {
-            $productos_pedido = Pedidos::where('id', $request->pedidos_id)->first();
-            return $productos_pedido->productos;
+            $productos_pedido = Pedidos::with('productos')->with('users')->where('id', $request->id)->first();
+            return response()->json([
+                'lSuccess' => true,
+                'pedido' => $productos_pedido,
+
+            ]);
         } catch (Exception $ex) {
             return response()->json([
                 'lSuccess' => false,

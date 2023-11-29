@@ -9,13 +9,20 @@ $(function ($) {
     pedidosTable.bootstrapTable({
         url: routeGetPedidos,
         uniqueId: 'id',
-        detailView: true,
-        icons: {
-            detailOpen: "fa fa-plus-circle",
-            detailClose: "fa fa-minus-circle",
-        },
+        // detailView: true,
+        // icons: {
+        //     detailOpen: "fa fa-plus-circle",
+        //     detailClose: "fa fa-minus-circle",
+        // },
         showFooter: true,
         columns: [
+            {
+                field: 'detalles',
+                visible: true,
+                formatter: function (value, row) {
+                    return '<button class="btn btn-primary" onclick="verDetallesPedido(' + row.id + ')"><i class="fa fa-plus-circle"></i></button>';
+                }
+            },
             {
                 field: 'inventario',
                 visible: false
@@ -31,12 +38,14 @@ $(function ($) {
             {
                 title: "No. Orden",
                 field: "numero_orden"
+                , visible: false
 
             },
 
             {
                 field: 'linea_referencia',
                 title: 'Línea de referencia',
+                visible: false,
             },
 
             {
@@ -51,34 +60,35 @@ $(function ($) {
             {
                 field: 'estatus',
                 title: 'Estado',
-                width: 25,
+                width: 15,
                 widthUnit: "%",
             },
             {
                 field: 'precio',
                 title: 'Total',
                 formatter: PrecioFormatter
+                , visible: false
             },
 
             {
                 title: 'Acciones',
-                formatter: AccionesFormatter,
+                formatter: AccionesFormatter
             }],
         onExpandRow: function (index, row, $detail) {
-            let detallesHTML = "<table class='table  detalles' cellspacing='0'></table>";
-            let productosHTML = "<table class='table  productos' cellspacing='0'></table>";
+            /*     let detallesHTML = "<table class='table  detalles' cellspacing='0'></table>";
+                let productosHTML = "<table class='table  productos' cellspacing='0'></table>";
 
-            let combinedHTML = detallesHTML + productosHTML;
+                let combinedHTML = detallesHTML + productosHTML;
 
-            $detail.html(combinedHTML);
+                $detail.html(combinedHTML);
 
-            let detallesTable = $detail.find(".detalles");
-            let productosTable = $detail.find(".productos");
+                let detallesTable = $detail.find(".detalles");
+                let productosTable = $detail.find(".productos");
 
-            // Now you can work with 'detallesTable' and 'productosTable' as needed
-            gridDetallesPedido(row, detallesTable, productosTable);
+                // Now you can work with 'detallesTable' and 'productosTable' as needed
+                gridDetallesPedido(row, detallesTable, productosTable);
 
-
+     */
         },
     })
 
@@ -212,6 +222,64 @@ function gridDetallesPedido(row, gridDetallesPedido, gridProductosPedido) {
 
 }
 
+function verDetallesPedido(id) {
+    let lstProductos = $("#detalleProductos");
+    $.ajax({
+        url: routeGetDetallesPedido,
+        type: "post",
+        encoding: "UTF-8",
+        async: true,
+        cache: false,
+        data: {
+            id: id,
+        },
+        beforeSend: function () {
+            Swal.fire({
+                title: "Cargando",
+                text: "Espere un momento",
+                didOpen: () => {
+                    swal.showLoading();
+                },
+            });
+        },
+        success: function (data) {
+            console.log(data);
+            Swal.close();
+            NProgress.done();
+            if (data.lSuccess == true) {
+                let nombre = `${data.pedido.users.nombre} ${data.pedido.users.apellido_paterno} ${data.pedido.users.apellido_materno}`;
+                $("#modalDetallesPedido").modal("show");
+                $("#detalleEncargado").text(nombre);
+                $("#detalleDatetime").text(moment(data.pedido.created_at).format("DD/MM/YYYY h:mm:ssa"));
+                $("#detalleLineaReferencia").text(data.pedido.linea_referencia);
+                $("#detalleEstatus").text(data.pedido.estatus);
+                let productos = data.pedido.productos;
+                lstProductos.empty();
+                $.each(productos, function (index, producto) {
+                    let txt = `${producto.nombre_producto} x${producto.pivot.cantidad}`
+                    $("<li>").text(txt).appendTo(lstProductos);
+                });
+
+            } else {
+                Swal.fire({
+                    title: "Error",
+                    text: data.cMensaje,
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                });
+            }
+
+        },
+        error: function (err) {
+            Swal.fire({
+                title: "Error",
+                text: "Ocurrió un error desconocido.",
+                icon: "error",
+                confirmButtonText: "Aceptar",
+            });
+        },
+    });
+}
 
 //#endregion
 
