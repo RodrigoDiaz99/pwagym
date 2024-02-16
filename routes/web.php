@@ -17,6 +17,14 @@ Route::get('/', function () {
     }
 });
 
+Route::get('/home', function () {
+    if (Auth::check()) {
+        return redirect(route('comandera.index'));
+    } else {
+        return view('auth.login');
+    }
+});
+
 Auth::routes();
 Route::middleware(['auth'])->group(function () {
 

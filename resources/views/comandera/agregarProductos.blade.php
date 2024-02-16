@@ -27,7 +27,7 @@
             <h4 class="card-title">Productos</h4>
             <div class="row">
                 @foreach ($productos as $producto)
-                    <div class="col-md-2 objProducto" value="{{ $producto->id }}" data-producto_id="{{ $producto->id }}"
+                    <div class="col-lg-2 objProducto" value="{{ $producto->id }}" data-producto_id="{{ $producto->id }}"
                         data-cantidad_producto="{{ $producto->cantidad_producto }}" data-inventario="{{ $producto->inventario }}"
                         data-precio_venta="{{ $producto->precio_venta }}" data-nombre_producto = "{{ $producto->nombre_producto }}" class="cardProducto">
                         <div class="card">
@@ -49,7 +49,7 @@
     <div id="seccionPedido" class="card">
         <div class="card-body">
             <div class="row justify-content-end">
-                <div class="col-md-auto">
+                <div class="col-lg-auto">
                     <div class="form-check form-check-inline">
                         <label class="form-check-label">
                             <input id="lMostrarPrecios" class="form-check-input" type="checkbox" name="lMostrarPrecios"> Mostrar precios

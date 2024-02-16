@@ -41,8 +41,9 @@ class PedidosController extends Controller
                     $productos_pedido = Productos_Pedidos::where('pedidos_id', $id)->get();
                     foreach ($productos_pedido as $producto_pedido) {
                         $producto = Productos::where('id', $producto_pedido->productos_id)->where('inventario', '1')->first();
-                        $producto->cantidad_producto -= $producto_pedido->cantidad;
-                        $producto->save();
+                        if($producto){
+                            $producto->cantidad_producto -= $producto_pedido->cantidad;
+                        }
                     }
                     $pedido->estatus = $estatus;
                     $pedido->save();

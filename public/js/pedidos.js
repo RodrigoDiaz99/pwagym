@@ -314,46 +314,46 @@ function AccionesFormatter(value, row) {
             html +=
                 '<a href="/comandera/agregarProductos/' + row.id + '" onclick="agregarProductos(' +
                 row.id +
-                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Agregar productos"><i class="fas fa-plus"></i></a>&nbsp;';
+                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Agregar productos"><i class="fas fa-plus"></i>AGREGAR PRODUCTOS</a>&nbsp;';
             html +=
                 '<a href="javascript:void(0);" onclick="cambiarEstatus(' +
                 row.id +
                 "," +
                 "'ACEPTADO'" +
-                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Aceptar"><i class="fas fa-check"></i></a>&nbsp;';
+                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Aceptar"><i class="fas fa-check"></i>ACEPTAR</a>&nbsp;';
             html +=
                 '<a href="javascript:void(0);" onclick="cancelarPedido(' +
-                row.id + ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i></a>&nbsp;';
+                row.id + ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i>CANCELAR</a>&nbsp;';
             break;
         case "ACEPTADO":
             html +=
                 '<a href="/comandera/agregarProductos/' + row.id + '" onclick="agregarProductos(' +
                 row.id +
-                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Agregar productos"><i class="fas fa-plus"></i></a>&nbsp;';
+                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Agregar productos"><i class="fas fa-plus"></i>AGREGAR PRODUCTOS</a>&nbsp;';
             html +=
                 '<a href="javascript:void(0);" onclick="cambiarEstatus(' +
                 row.id +
                 "," +
                 "'PREPARACIÓN'" +
-                ')" class="btn btn-round btn-warning" rel="tooltip" data-toggle="tooltip" title="Elaboracion"><i class="fas fa-retweet"></i></a>&nbsp;';
+                ')" class="btn btn-round btn-warning" rel="tooltip" data-toggle="tooltip" title="Elaboracion"><i class="fas fa-retweet"></i>PREPARACIÓN</a>&nbsp;';
             html +=
                 '<a href="javascript:void(0);" onclick="cancelarPedido(' +
-                row.id + ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i></a>&nbsp;';
+                row.id + ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i>CANCELAR</a>&nbsp;';
             break;
         case "PREPARACIÓN":
             html +=
                 '<a href="/comandera/agregarProductos/' + row.id + '" onclick="agregarProductos(' +
                 row.id +
-                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Agregar productos"><i class="fas fa-plus"></i></a>&nbsp;';
+                ')" class="btn btn-round btn-success" rel="tooltip" data-toggle="tooltip" title="Agregar productos"><i class="fas fa-plus"></i>AGREGAR PRODUCTOS</a>&nbsp;';
             html +=
                 '<a href="javascript:void(0);" onclick="cambiarEstatus(' +
                 row.id +
                 "," +
                 "'LISTO'" +
-                ')" class="btn btn-round btn-warning" rel="tooltip" data-toggle="tooltip" title="Listo"><i class="fas fa-retweet"></i></a>&nbsp;';
+                ')" class="btn btn-round btn-warning" rel="tooltip" data-toggle="tooltip" title="Listo"><i class="fas fa-retweet"></i>LISTO</a>&nbsp;';
             html +=
                 '<a href="javascript:void(0);" onclick="cancelarPedido(' +
-                row.id + ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i></a>&nbsp;';
+                row.id + ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Rechazar"><i class="fas fa-ban"></i>CANCELAR</a>&nbsp;';
             break;
 
         case "LISTO":
@@ -363,7 +363,7 @@ function AccionesFormatter(value, row) {
                 row.id +
                 "," +
                 "'FINALIZADO'" +
-                ')" class="btn btn-round btn-warning" rel="tooltip" data-toggle="tooltip" title="Entregado"><i class="fas fa-retweet"></i></a>&nbsp;';
+                ')" class="btn btn-round btn-warning" rel="tooltip" data-toggle="tooltip" title="Entregado"><i class="fas fa-retweet"></i>FINALIZAR</a>&nbsp;';
             break;
 
         case "CANCELADO":
@@ -372,7 +372,7 @@ function AccionesFormatter(value, row) {
                 row.id +
                 "," +
                 "'COMANDERA'" +
-                ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Motivo Cancelado"><i class="fa fa-inbox"></i></a>&nbsp;';
+                ')" class="btn btn-round btn-danger" rel="tooltip" data-toggle="tooltip" title="Motivo Cancelado"><i class="fa fa-inbox"></i>MOTIVO DE CANCELACIÓN</a>&nbsp;';
             break;
     }
     return html;

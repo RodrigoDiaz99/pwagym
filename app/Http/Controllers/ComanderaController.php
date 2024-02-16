@@ -16,7 +16,7 @@ class ComanderaController extends Controller
 {
     public function index()
     {
-        $rolesPermitidos = array("Cocina");
+        $rolesPermitidos = array("Cocinero");
 
         $productos = Productos::where('estatus', 'Disponible')
             ->where(function ($query) {

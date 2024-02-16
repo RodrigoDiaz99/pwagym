@@ -46,7 +46,7 @@
             <h4 class="card-title">Productos</h4>
             <div class="row">
                 @foreach ($productos as $producto)
-                    <div class="col-md-2 objProducto" value="{{ $producto->id }}" data-producto_id="{{ $producto->id }}"
+                    <div class="col-lg-2 objProducto" value="{{ $producto->id }}" data-producto_id="{{ $producto->id }}"
                         data-cantidad_producto="{{ $producto->cantidad_producto }}" data-inventario="{{ $producto->inventario }}"
                         data-precio_venta="{{ $producto->precio_venta }}" data-nombre_producto = "{{ $producto->nombre_producto }}" class="cardProducto">
                         <div class="card">
