@@ -65,6 +65,7 @@ class ComanderaController extends Controller
                 'comentarios' => $comentario,
                 'precio' => $totalCompra,
                 'users_id' => $usuario->id,
+                'cobrado' => false,
             ]);
 
             $numero_orden = '000' . $numero_orden;

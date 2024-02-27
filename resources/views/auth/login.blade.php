@@ -16,7 +16,7 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <!-- Custom styles for this template-->
-    <link href="{{ asset('styles/css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('styles/css/sb-admin-2.css') }}" rel="stylesheet">
     <link href="{{ asset('styles/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('styles/vendor/jquery/jquery.min.js') }}"></script>
