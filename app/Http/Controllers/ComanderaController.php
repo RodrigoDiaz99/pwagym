@@ -79,6 +79,11 @@ class ComanderaController extends Controller
             // Obtener los datos de cada producto
             foreach ($productos as $producto) {
 
+                $productoInventario = Productos::where('id', $producto['id'])->first();
+                if ($productoInventario->inventario == 1) {
+                    $productoInventario->cantidad_producto = $productoInventario->cantidad_producto - $producto['unidades'];
+                }
+                $productoInventario->save();
                 Productos_Pedidos::create([
                     'cantidad' => $producto['unidades'],
                     'productos_id' => $producto['id'],

@@ -82,6 +82,12 @@ $(function ($) {
                             html = `<span class="badge text-bg-warning">${value}</span>`
                             break;
                     }
+
+                    if (row.cobrado > 0) {
+                        html += ` / <span class="badge text-bg-success">COBRADO</span>`;
+                    } else {
+                        html += ` / <span class="badge text-bg-danger">SIN COBRAR</span>`;
+                    }
                     return html;
                 },
                 width: 15,
