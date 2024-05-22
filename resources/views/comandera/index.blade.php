@@ -40,6 +40,23 @@
 
         </div>
     </div> --}}
+    <div class="card">
+        <div class="card-body">
+            <div class="mb-2">
+                <div class="form-group">
+                    <strong>Cliente que ordenó</strong>
+                    <select id="codigo_usuario_cliente" class="form-control" name="codigo_usuario_cliente">
+                        @foreach ($clientes as $cliente)
+                            <option value="{{ $cliente->codigo_usuario }}">{{ $cliente->codigo_usuario }} - {{ $cliente->nombre }}
+                                {{ $cliente->apellido_paterno }} {{ $cliente->apellido_materno }} </option>
+                        @endforeach
+
+                    </select>
+                </div>
+                <label id="err_codigo_usuario" for="codigo_usuario" class="text-danger" style="display:none;">Este campo es requerido.</label>
+            </div>
+        </div>
+    </div>
 
     <div class="card">
         <div class="card-body">

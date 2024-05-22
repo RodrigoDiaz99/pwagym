@@ -137,6 +137,7 @@ function eliminarProducto(id) {
 function enviarOrden() {
     $("#err_codigo_usuario").hide();
     let codigo_usuario = $("#codigo_usuario").val();
+    let codigo_usuario_cliente = $("#codigo_usuario_cliente").val();
     let comentarios = $("#cComentarios").val();
     let productos = productosTable.bootstrapTable('getData');
     if (productos.length <= 0) {
@@ -160,6 +161,7 @@ function enviarOrden() {
                 productos: productos,
                 total_venta: $("#totalVenta").val(),
                 codigo_usuario: codigo_usuario,
+                codigo_usuario_cliente: codigo_usuario_cliente,
                 comentarios: comentarios
             },
             beforeSend: function () {
@@ -174,7 +176,7 @@ function enviarOrden() {
                 if (data.lSuccess) {
                     Swal.fire({
                         title: "Correcto",
-                        text: "Se aplicaron los cambios correctamente",
+                        text: data.cMensaje,
                         icon: "success",
                         confirmButtonText: "Aceptar",
                     }).then((result) => {

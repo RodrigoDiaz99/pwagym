@@ -10,6 +10,13 @@
             <div class="modal-body">
 
                 <div class="row">
+                    <div class="col-md-12">
+                        <b>CLIENTE:</b> <span id="detalleCliente">CLIENTE</span>
+                    </div>
+
+                </div>
+
+                <div class="row">
                     <div class="col-md-6">
                         <b>ENCARGADO:</b> <span id="detalleEncargado">ENCARGADO</span>
                     </div>

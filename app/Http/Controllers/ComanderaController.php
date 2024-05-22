@@ -16,7 +16,6 @@ class ComanderaController extends Controller
 {
     public function index()
     {
-        $rolesPermitidos = array("Cocinero");
 
         $productos = Productos::where('estatus', 'Disponible')
             ->where(function ($query) {
@@ -25,11 +24,16 @@ class ComanderaController extends Controller
             })
             ->orWhere('inventario', false)
             ->get();
-        $usuarios = Users::whereHas('rol', function ($query) use ($rolesPermitidos) {
-            $query->whereIn('nombre', $rolesPermitidos);
+
+        $usuarios = Users::whereHas('rol', function ($query) {
+            $query->whereIn('nombre', array('Cocinero'));
         })->get();
 
-        return view('comandera.index', compact('productos', 'usuarios'));
+        $clientes = Users::whereHas('rol', function ($query) {
+            $query->whereIn('nombre', array('Cliente'));
+        })->get();
+
+        return view('comandera.index', compact('productos', 'usuarios', 'clientes'));
     }
 
     public function getProducto(Request $request)
@@ -52,11 +56,17 @@ class ComanderaController extends Controller
             $totalCompra = $request->total_venta;
             $comentario = $request->comentarios;
             $user = $request->codigo_usuario;
+            $user_cliente = $request->codigo_usuario_cliente;
             $usuario = User::where('codigo_usuario', $user)->first();
+            $cliente = User::where('codigo_usuario', $user_cliente)->first();
 
             if (is_null($usuario)) {
-                throw new Exception('No se encontro el usuario con ese codigo');
+                throw new Exception('No se encontro el usuario con ese código.');
             }
+            if (is_null($cliente)) {
+                throw new Exception('No se encontro el cliente con ese código.');
+            }
+
             $numero_orden = Configuracion::getConfiguracion('numero_orden');
             $pedido = Pedidos::create([
                 'numero_orden' => $numero_orden,
@@ -65,6 +75,7 @@ class ComanderaController extends Controller
                 'comentarios' => $comentario,
                 'precio' => $totalCompra,
                 'users_id' => $usuario->id,
+                'cliente_id' => $cliente->id,
                 'cobrado' => false,
             ]);
 

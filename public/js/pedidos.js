@@ -278,8 +278,15 @@ function verDetallesPedido(id) {
             NProgress.done();
             if (data.lSuccess == true) {
                 let nombre = `${data.pedido.users.nombre} ${data.pedido.users.apellido_paterno} ${data.pedido.users.apellido_materno}`;
+                let nombre_cliente = `SIN INFORMACIÓN`;
+
+                if (data.pedido.cliente) {
+                     nombre_cliente = `${data.pedido.cliente.nombre} ${data.pedido.cliente.apellido_paterno} ${data.pedido.cliente.apellido_materno}`;
+                }
+
                 $("#modalDetallesPedido").modal("show");
                 $("#detalleEncargado").text(nombre);
+                $("#detalleCliente").text(nombre_cliente);
                 $("#detalleDatetime").text(moment(data.pedido.created_at).format("DD/MM/YYYY h:mm:ssa"));
                 $("#detalleLineaReferencia").text(data.pedido.linea_referencia);
                 $("#detalleEstatus").text(data.pedido.estatus);

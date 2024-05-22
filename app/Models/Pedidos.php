@@ -10,7 +10,7 @@ class Pedidos extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['numero_orden','comentarios', 'linea_referencia', 'estatus', 'precio', 'users_id', 'cobrado'];
+    protected $fillable = ['numero_orden','comentarios', 'linea_referencia', 'estatus', 'precio', 'users_id', 'cliente_id', 'cobrado'];
 
     public function productos()
     {
@@ -19,5 +19,9 @@ class Pedidos extends Model
 
     public function users(){
         return $this->hasOne(Users::class, 'id', 'users_id');
+    }
+
+    public function cliente(){
+        return $this->hasOne(Users::class, 'id', 'cliente_id');
     }
 }
